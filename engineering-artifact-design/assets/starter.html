@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engineering Artifact</title>
+<style>
+  :root {
+    --ivory: #FAF9F5;
+    --paper: #FFFFFF;
+    --slate: #141413;
+    --clay: #D97757;
+    --clay-d: #B85C3E;
+    --oat: #E3DACC;
+    --olive: #788C5D;
+    --rust: #B04A3F;
+    --info: #5C7CA3;
+    --gray-100: #F0EEE6;
+    --gray-300: #D1CFC5;
+    --gray-500: #87867F;
+    --gray-700: #3D3D3A;
+    --serif-latin: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --serif-cjk: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    --sans-latin: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --sans-cjk: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    --serif: var(--serif-latin), var(--serif-cjk);
+    --sans: var(--sans-latin), var(--sans-cjk);
+    --border: 1.5px solid var(--gray-300);
+    --radius-row: 8px;
+    --radius-panel: 12px;
+    --shadow-lift: 0 10px 30px rgba(20,20,19,.10);
+    --ease-standard: cubic-bezier(.16, 1, .3, 1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ivory: #1C1B19;
+      --paper: #262523;
+      --slate: #F5F4F0;
+      --clay: #E8936F;
+      --clay-d: #D97757;
+      --oat: #3D3832;
+      --olive: #8FA86E;
+      --rust: #D4635A;
+      --info: #7FA0C7;
+      --gray-100: #2E2D2A;
+      --gray-300: #4A4843;
+      --gray-500: #9C9B94;
+      --gray-700: #D9D8D2;
+      --shadow-lift: 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--gray-700);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  :lang(zh) body,
+  body.zh {
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+  .page { max-width: 1080px; margin: 0 auto; padding: 56px 28px 96px; }
+  .page, .rail > *, section, aside, .panel, .card { min-width: 0; }
+  header { margin-bottom: 36px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 10px;
+  }
+  h1, h2, h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    color: var(--slate);
+    letter-spacing: -.01em;
+  }
+  :lang(zh) h1,
+  body.zh h1 {
+    line-height: 1.16;
+    letter-spacing: 0;
+  }
+  h1 { font-size: clamp(34px, 5vw, 56px); line-height: 1.08; margin: 0 0 14px; max-width: 18ch; }
+  h2 { font-size: 24px; margin: 42px 0 14px; }
+  h3 { font-size: 18px; margin: 0 0 8px; }
+  p { max-width: 720px; margin: 0 0 14px; } /* For 1100px+ wide layouts: set max-width: none */
+  :lang(zh) p,
+  body.zh p { max-width: 42em; } /* For 1100px+ wide layouts: set max-width: none */
+  code, pre, .path, .metric, .mono { font-family: var(--mono); font-size: .92em; }
+  code {
+    background: var(--gray-100);
+    border-radius: 4px;
+    padding: 1px 4px;
+  }
+
+  .rail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 32px;
+    align-items: start;
+  }
+  aside {
+    position: sticky;
+    top: 24px;
+    border: var(--border);
+    border-radius: var(--radius-panel);
+    background: var(--paper);
+    padding: 16px;
+  }
+  @media (max-width: 860px) {
+    .rail { grid-template-columns: minmax(0, 1fr); }
+    aside { position: static; }
+  }
+
+  .panel, .card {
+    margin: 0;
+    background: var(--paper);
+    border: var(--border);
+    border-radius: var(--radius-panel);
+  }
+  .panel { padding: 20px; }
+  .diagram-shell {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .diagram-shell svg {
+    display: block;
+    min-width: 560px;
+    max-width: 100%;
+    height: auto;
+  }
+  .diagram-node {
+    fill: var(--paper);
+    stroke: var(--gray-300);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .diagram-node.is-hot {
+    stroke: var(--clay);
+    stroke-width: 2;
+  }
+  .diagram-edge {
+    fill: none;
+    stroke: var(--gray-500);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .diagram-edge.is-hot {
+    stroke: var(--clay);
+    stroke-width: 2;
+  }
+  .diagram-label {
+    fill: var(--slate);
+    font-family: var(--sans);
+    font-size: 13px;
+  }
+  .diagram-label-mono {
+    fill: var(--gray-700);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .04em;
+  }
+  .diagram-arrow { fill: var(--gray-500); }
+  .diagram-arrow.is-hot { fill: var(--clay); }
+  .content-stack {
+    display: grid;
+    gap: 14px;
+  }
+  .content-stack > * {
+    margin-block: 0;
+  }
+  .content-stack > .divider {
+    margin: 4px 0;
+  }
+  .adaptive-info-list {
+    display: grid;
+    container-type: inline-size;
+  }
+  .info-row {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.1fr) auto minmax(16em, 1.4fr);
+    gap: 8px 14px;
+    align-items: start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .info-row:last-child {
+    border-bottom: 0;
+  }
+  .info-row .path,
+  .info-row .machine {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .info-row .desc {
+    min-width: 16em;
+  }
+  @container (max-width: 620px) {
+    .info-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .info-row .desc {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+  }
+  @media (max-width: 720px) {
+    .info-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .info-row .desc {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card {
+    padding: 16px;
+    transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--slate); box-shadow: var(--shadow-lift); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: var(--border);
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--gray-700);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-500); }
+  .dot.clay { background: var(--clay); }
+  .dot.olive { background: var(--olive); }
+  .dot.rust { background: var(--rust); }
+
+  .btn {
+    appearance: none;
+    border: 1.5px solid var(--slate);
+    border-radius: 999px;
+    background: var(--slate);
+    color: var(--ivory);
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 9px 14px;
+  }
+  .btn.secondary { background: transparent; color: var(--gray-700); border-color: var(--gray-300); }
+  .btn.copied { background: var(--olive); border-color: var(--olive); }
+  .btn.selected { background: var(--info); border-color: var(--info); }
+  aside .btn + .btn { margin-top: 8px; }
+  .btn:focus-visible {
+    outline: 0;
+    box-shadow: inset 0 0 0 2px rgba(92,124,163,.42);
+  }
+
+  .tabs,
+  .segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    max-width: 100%;
+    padding: 4px;
+    border: var(--border);
+    border-radius: 16px;
+    background: var(--gray-100);
+  }
+  .nav-wrap .tabs,
+  .toolbar-rail .segmented {
+    display: flex;
+    width: 100%;
+  }
+  .tab,
+  .segment {
+    appearance: none;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 12px;
+    background: var(--paper);
+    color: var(--gray-700);
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 12px;
+    min-height: 34px;
+    padding: 8px 12px;
+  }
+  .tab:hover,
+  .segment:hover { border-color: var(--gray-500); background: var(--paper); }
+  .tab:focus-visible,
+  .segment:focus-visible {
+    outline: 0;
+    box-shadow: inset 0 0 0 2px rgba(92,124,163,.42);
+  }
+  .tab[aria-selected="true"],
+  .segment[aria-pressed="true"],
+  .segment.active {
+    background: var(--paper);
+    border-color: var(--slate);
+    color: var(--slate);
+  }
+
+  .control-stack {
+    display: grid;
+    gap: 14px;
+  }
+  .control-stack > p,
+  .control-stack .meter,
+  .control-stack .chips {
+    margin: 0;
+  }
+  .control-stack .chips {
+    padding-top: 2px;
+  }
+  .range-wrap {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+
+  details {
+    background: var(--paper);
+    border: var(--border);
+    border-radius: var(--radius-row);
+    overflow: hidden;
+  }
+  details + details { margin-top: 10px; }
+  summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 14px;
+    color: var(--slate);
+    font-family: var(--serif);
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: ">"; color: var(--clay); font-family: var(--mono); margin-right: 8px; }
+  details[open] summary { border-bottom: 1px solid var(--gray-100); }
+  .details-body { padding: 14px; }
+
+  .code {
+    background: var(--slate);
+    color: #E8E6DE;
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    overflow-x: auto;
+    padding: 16px;
+  }
+  .callout {
+    border: var(--border);
+    border-left: 3px solid var(--clay);
+    border-radius: var(--radius-row);
+    background: var(--paper);
+    padding: 14px 16px;
+  }
+  section > .callout + :is(.grid, .table-wrap, .diagram-shell, .panel, details) {
+    margin-top: 18px;
+  }
+
+  /* Screen reader only */
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+
+  @media print {
+    body { background: #fff; color: #1a1a1a; font-size: 12pt; }
+    .page { max-width: 100%; padding: 0; }
+    .btn, .tabs, .segmented { display: none !important; }
+    .card, .panel, .callout, details { break-inside: avoid; border-color: #ccc; box-shadow: none; }
+    .card:hover { transform: none; }
+    .code { background: #f5f5f5 !important; color: #1a1a1a !important; border: 1px solid #ccc; white-space: pre-wrap; }
+    .rail { grid-template-columns: 1fr; }
+    aside { position: static; }
+    h1, h2, h3 { break-after: avoid; }
+    a { color: inherit; text-decoration: underline; }
+    a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; }
+    a[href^="#"]::after { content: ""; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div class="eyebrow">Artifact / system note</div>
+    <h1>Replace this with the artifact title</h1>
+    <p>Use this lead paragraph to state the system boundary, problem, decision, or mechanism in plain language.</p>
+    <div class="chips">
+      <span class="chip"><span class="dot clay"></span>needs attention</span>
+      <span class="chip"><span class="dot olive"></span>covered</span>
+      <span class="chip"><span class="dot"></span>supporting context</span>
+    </div>
+  </header>
+
+  <div class="rail">
+    <section>
+      <div class="callout">
+        <strong>TL;DR.</strong> Put the key mental model, finding, or decision here.
+      </div>
+
+      <h2>Primary Map</h2>
+      <div class="panel diagram-shell">
+        <svg viewBox="0 0 640 220" role="img" aria-label="Example system map">
+          <title>Example system map</title>
+          <desc>Entry flows through the hot path into the store.</desc>
+          <defs>
+            <marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+              <path class="diagram-arrow" d="M0,0 L8,4 L0,8 Z"></path>
+            </marker>
+            <marker id="arrow-hot" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+              <path class="diagram-arrow is-hot" d="M0,0 L8,4 L0,8 Z"></path>
+            </marker>
+          </defs>
+          <line class="diagram-edge" x1="170" y1="89" x2="242" y2="89" marker-end="url(#arrow)"></line>
+          <line class="diagram-edge is-hot" x1="390" y1="89" x2="462" y2="89" marker-end="url(#arrow-hot)"></line>
+          <rect class="diagram-node" x="30" y="54" width="140" height="70" rx="10"></rect>
+          <rect class="diagram-node is-hot" x="250" y="54" width="140" height="70" rx="10"></rect>
+          <rect class="diagram-node" x="470" y="54" width="140" height="70" rx="10"></rect>
+          <text class="diagram-label" x="100" y="84" text-anchor="middle">entry</text>
+          <text class="diagram-label" x="320" y="84" text-anchor="middle">hot path</text>
+          <text class="diagram-label" x="540" y="84" text-anchor="middle">store</text>
+          <text class="diagram-label-mono" x="320" y="106" text-anchor="middle">critical branch</text>
+        </svg>
+      </div>
+
+      <h2>Cards</h2>
+      <div class="grid">
+        <article class="card"><h3>Finding</h3><p>Use compact cards for risks, options, phases, hypotheses, or files.</p></article>
+        <article class="card"><h3>Evidence</h3><p>Anchor claims in file paths, metrics, logs, screenshots, or test results.</p></article>
+      </div>
+
+      <h2>Details</h2>
+      <details open>
+        <summary>Expandable supporting context</summary>
+        <div class="details-body">
+          <pre class="code">const example = "keep code and logs close to the explanation";</pre>
+        </div>
+      </details>
+    </section>
+
+    <aside>
+      <div class="eyebrow">Controls</div>
+      <p class="mono">Use this rail for glossary, filters, metrics, owners, or copy actions.</p>
+      <button class="btn" data-copy="Copyable summary text">Copy summary</button>
+      <button class="btn secondary">Secondary</button>
+    </aside>
+  </div>
+</main>
+
+<script>
+  function setCopyState(button, label, className) {
+    var original = button.dataset.originalLabel || button.textContent;
+    button.dataset.originalLabel = original;
+    button.textContent = label;
+    button.classList.add(className);
+    setTimeout(function () {
+      button.textContent = original;
+      button.classList.remove(className);
+    }, 1400);
+  }
+
+  function selectTextFallback(text) {
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      return document.execCommand("copy");
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  document.querySelectorAll("[data-copy]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var text = button.getAttribute("data-copy") || "";
+      function copied() {
+        setCopyState(button, "Copied", "copied");
+      }
+      function selected() {
+        setCopyState(button, "Selected", "selected");
+      }
+      function fallback() {
+        if (selectTextFallback(text)) copied();
+        else selected();
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(copied, fallback);
+      } else {
+        fallback();
+      }
+    });
+  });
+</script>
+</body>
+</html>

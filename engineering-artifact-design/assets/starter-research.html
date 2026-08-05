@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Technical Research</title>
+<style>
+  :root {
+    --ivory: #FAF9F5;
+    --paper: #FFFFFF;
+    --slate: #141413;
+    --clay: #D97757;
+    --clay-d: #B85C3E;
+    --oat: #E3DACC;
+    --olive: #788C5D;
+    --rust: #B04A3F;
+    --info: #5C7CA3;
+    --gray-100: #F0EEE6;
+    --gray-300: #D1CFC5;
+    --gray-500: #87867F;
+    --gray-700: #3D3D3A;
+    --serif-latin: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --serif-cjk: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    --sans-latin: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --sans-cjk: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    --serif: var(--serif-latin), var(--serif-cjk);
+    --sans: var(--sans-latin), var(--sans-cjk);
+    --border: 1.5px solid var(--gray-300);
+    --radius-row: 8px;
+    --radius-panel: 12px;
+    --shadow-lift: 0 10px 30px rgba(20,20,19,.10);
+    --ease-standard: cubic-bezier(.16, 1, .3, 1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ivory: #1C1B19;
+      --paper: #262523;
+      --slate: #F5F4F0;
+      --clay: #E8936F;
+      --clay-d: #D97757;
+      --oat: #3D3832;
+      --olive: #8FA86E;
+      --rust: #D4635A;
+      --info: #7FA0C7;
+      --gray-100: #2E2D2A;
+      --gray-300: #4A4843;
+      --gray-500: #9C9B94;
+      --gray-700: #D9D8D2;
+      --shadow-lift: 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--gray-700);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 1100px; margin: 0 auto; padding: 56px 28px 96px; }
+  .page, section, .panel, .candidate-card, .recommendation { min-width: 0; }
+  :lang(zh) body,
+  body.zh {
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; color: var(--slate); letter-spacing: -.01em; }
+  :lang(zh) h1,
+  body.zh h1 { letter-spacing: 0; }
+  h1 { font-size: clamp(28px, 4vw, 38px); line-height: 1.15; margin: 0 0 14px; }
+  h2 { font-size: 22px; margin: 42px 0 14px; }
+  h3 { font-size: 17px; margin: 0 0 8px; }
+  p { max-width: none; margin: 0 0 12px; }
+  code { font-family: var(--mono); font-size: .92em; background: var(--gray-100); border-radius: 4px; padding: 1px 4px; }
+  a { color: var(--clay); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 10px; }
+  .panel { margin: 0; background: var(--paper); border: var(--border); border-radius: var(--radius-panel); padding: 22px; }
+  .content-stack { display: grid; gap: 14px; }
+  .content-stack > * { margin-block: 0; }
+  .callout { border: var(--border); border-left: 3px solid var(--clay); border-radius: var(--radius-row); background: var(--paper); padding: 14px 16px; }
+  .callout.olive { border-left-color: var(--olive); }
+  section > .callout + :is(.grid, .candidate-grid, .table-wrap, .diagram-shell, .panel, details) { margin-top: 18px; }
+
+  /* Diagram */
+  .diagram-shell { overflow-x: auto; overflow-y: hidden; }
+  .diagram-shell svg { display: block; min-width: 720px; max-width: 100%; height: auto; }
+  .axis { stroke: var(--gray-300); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .axis-label { fill: var(--gray-500); font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; }
+  .plot-dot { fill: var(--paper); stroke: var(--gray-500); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .plot-dot.is-picked { stroke: var(--olive); stroke-width: 2; }
+  .plot-dot.is-risk { stroke: var(--rust); stroke-width: 2; }
+  .plot-label { fill: var(--slate); font-family: var(--sans); font-size: 12px; }
+  .plot-note { fill: var(--gray-700); font-family: var(--mono); font-size: 10px; }
+  .plot-mask { fill: var(--paper); stroke: var(--gray-300); stroke-width: 1; vector-effect: non-scaling-stroke; }
+
+  /* Grid */
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+  /* Chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 7px; border: var(--border); border-radius: 999px; background: var(--paper); font-family: var(--sans); font-size: 12px; padding: 5px 10px; }
+  .chip-mono { font-family: var(--mono); font-size: 11px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-500); }
+  .dot.clay { background: var(--clay); }
+  .dot.olive { background: var(--olive); }
+  .dot.oat { background: var(--oat); }
+  .dot.rust { background: var(--rust); }
+  .dot.info { background: var(--info); }
+  .badge { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; padding: 3px 7px; border-radius: 5px; background: var(--gray-100); color: var(--gray-700); }
+  .badge.clay { background: rgba(217,119,87,.15); color: var(--clay-d); }
+  .badge.olive { background: rgba(120,140,93,.15); color: var(--slate); }
+  .badge.rust { background: rgba(176,74,63,.12); color: var(--rust); }
+  .badge.info { background: rgba(92,124,163,.12); color: var(--info); }
+
+  /* Candidate Card */
+  .candidate-card { background: var(--paper); border: var(--border); border-radius: var(--radius-panel); padding: 20px; transition: transform 150ms var(--ease-standard), box-shadow 150ms, border-color 150ms; }
+  .candidate-card:hover { transform: translateY(-2px); border-color: var(--slate); box-shadow: var(--shadow-lift); }
+  .candidate-card h3 { margin-bottom: 10px; }
+  .candidate-card .fit { margin-bottom: 12px; }
+  .candidate-card.is-recommended { border-color: var(--olive); }
+  .card-copy { font-size: 14px; }
+  .candidate-card .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px; margin-top: 12px; }
+  .candidate-card .pros-cons ul { list-style: none; padding: 0; margin: 0; }
+  .candidate-card .pros-cons li { padding: 4px 0; padding-left: 16px; position: relative; }
+  .candidate-card .pros-cons .pros li::before { content: "+"; position: absolute; left: 0; color: var(--olive); font-weight: 600; }
+  .candidate-card .pros-cons .cons li::before { content: "−"; position: absolute; left: 0; color: var(--rust); font-weight: 600; }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--gray-100); }
+  th { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--gray-500); background: var(--gray-100); }
+  tr:hover td { background: var(--gray-100); }
+
+  /* Recommendation Band */
+  .recommendation { border: 2px solid var(--olive); border-radius: var(--radius-panel); padding: 22px; background: var(--paper); margin-top: 24px; }
+  .recommendation h3 { color: var(--olive); margin-bottom: 8px; }
+
+  /* Details */
+  details { background: var(--paper); border: var(--border); border-radius: var(--radius-row); overflow: hidden; }
+  details + details { margin-top: 10px; }
+  summary { cursor: pointer; list-style: none; padding: 12px 14px; color: var(--slate); font-family: var(--sans); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "›"; color: var(--clay); font-family: var(--mono); font-size: 16px; transition: transform 150ms var(--ease-standard); }
+  details[open] summary::before { transform: rotate(90deg); }
+  details[open] summary { border-bottom: 1px solid var(--gray-100); }
+  .details-body { padding: 14px; }
+
+  /* Buttons */
+  .btn { appearance: none; border: 1.5px solid var(--slate); border-radius: 999px; background: var(--slate); color: var(--ivory); cursor: pointer; font-family: var(--mono); font-size: 12px; padding: 9px 14px; transition: background 120ms ease; }
+  .btn:hover { background: var(--gray-700); }
+  .btn.secondary { background: transparent; color: var(--gray-700); border-color: var(--gray-300); }
+  .btn:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px rgba(92,124,163,.42); }
+  .btn.copied { background: var(--olive); border-color: var(--olive); }
+  .btn.selected { background: var(--info); border-color: var(--info); }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+
+  /* Meta band */
+  .meta-band { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--gray-500); margin-top: 14px; }
+  .meta-band .item { display: flex; align-items: center; gap: 6px; }
+  .meta-band .item strong { color: var(--slate); font-weight: 500; }
+
+  @media (max-width: 720px) {
+    .candidate-card .pros-cons { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; } }
+  @media print {
+    body { background: #fff; color: #1a1a1a; }
+    .btn, .btn-group { display: none; }
+    .panel, .candidate-card, details, .recommendation { break-inside: avoid; border-color: #ccc; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- Header -->
+  <header>
+    <div class="eyebrow">Technical Research / evaluation</div>
+    <h1>Research Question Goes Here</h1>
+    <p>One-line scope: what we're evaluating, for which system, under which constraints.</p>
+    <div class="meta-band">
+      <div class="item"><strong>Owner:</strong> Team/Person</div>
+      <div class="item"><strong>Deadline:</strong> 2026-05-20</div>
+      <div class="item"><strong>Status:</strong> <span class="badge olive">Recommendation ready</span></div>
+    </div>
+  </header>
+
+  <!-- Executive Readout -->
+  <section>
+    <h2>Executive readout</h2>
+    <div class="callout olive">
+      <strong>Recommendation:</strong> Option B (description). High confidence based on PoC results and production references. Major caveat: requires X migration work.
+    </div>
+  </section>
+
+  <!-- Evaluation Criteria -->
+  <section>
+    <h2>Evaluation criteria</h2>
+    <div class="chips">
+      <span class="chip chip-mono"><span class="dot clay"></span>Integration cost</span>
+      <span class="chip chip-mono"><span class="dot clay"></span>Performance</span>
+      <span class="chip chip-mono"><span class="dot oat"></span>Community health</span>
+      <span class="chip chip-mono"><span class="dot oat"></span>Vendor lock-in</span>
+      <span class="chip chip-mono"><span class="dot"></span>Licensing</span>
+    </div>
+  </section>
+
+  <!-- Landscape Map -->
+  <section>
+    <h2>Landscape map</h2>
+    <div class="panel diagram-shell">
+      <svg viewBox="0 0 720 320" role="img" aria-label="Candidate landscape by maturity and product fit">
+        <title>Candidate landscape</title>
+        <desc>Option B has the strongest fit and enough maturity. Option C is mature but risky because operational control is low.</desc>
+        <line class="axis" x1="86" y1="252" x2="646" y2="252"></line>
+        <line class="axis" x1="86" y1="252" x2="86" y2="54"></line>
+        <text class="axis-label" x="646" y="276" text-anchor="end">maturity</text>
+        <text class="axis-label" x="68" y="58" text-anchor="end">fit</text>
+        <line class="axis" x1="86" y1="153" x2="646" y2="153" stroke-dasharray="4"></line>
+        <line class="axis" x1="366" y1="54" x2="366" y2="252" stroke-dasharray="4"></line>
+        <circle class="plot-dot" cx="300" cy="165" r="13"></circle>
+        <rect class="plot-mask" x="246" y="185" width="108" height="22" rx="4"></rect>
+        <text class="plot-label" x="300" y="200" text-anchor="middle">Option A</text>
+        <circle class="plot-dot is-picked" cx="510" cy="102" r="15"></circle>
+        <rect class="plot-mask" x="462" y="122" width="96" height="22" rx="4"></rect>
+        <text class="plot-label" x="510" y="137" text-anchor="middle">Option B</text>
+        <text class="plot-note" x="510" y="93" text-anchor="middle">chosen</text>
+        <circle class="plot-dot is-risk" cx="520" cy="198" r="13"></circle>
+        <rect class="plot-mask" x="466" y="218" width="108" height="22" rx="4"></rect>
+        <text class="plot-label" x="520" y="233" text-anchor="middle">Option C</text>
+        <text class="plot-note" x="116" y="88">higher strategic fit</text>
+        <text class="plot-note" x="472" y="276">more proven</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Candidate Cards -->
+  <section>
+    <h2>Candidates</h2>
+    <div class="grid grid-3">
+      <div class="candidate-card">
+        <h3>Option A</h3>
+        <div class="fit"><span class="badge">Moderate fit</span></div>
+        <p class="card-copy">Brief description of what this option is and its primary value proposition.</p>
+        <div class="pros-cons">
+          <div class="pros"><ul><li>Low integration cost</li><li>Active community</li></ul></div>
+          <div class="cons"><ul><li>Limited scale</li><li>No TypeScript SDK</li></ul></div>
+        </div>
+      </div>
+      <div class="candidate-card is-recommended">
+        <h3>Option B <span class="badge olive">Recommended</span></h3>
+        <div class="fit"><span class="badge olive">Strong fit</span></div>
+        <p class="card-copy">Brief description of what this option is and its primary value proposition.</p>
+        <div class="pros-cons">
+          <div class="pros"><ul><li>Best performance</li><li>Official SDK</li><li>Production refs</li></ul></div>
+          <div class="cons"><ul><li>Higher upfront cost</li></ul></div>
+        </div>
+      </div>
+      <div class="candidate-card">
+        <h3>Option C</h3>
+        <div class="fit"><span class="badge rust">Poor fit</span></div>
+        <p class="card-copy">Brief description of what this option is and its primary value proposition.</p>
+        <div class="pros-cons">
+          <div class="pros"><ul><li>Lowest cost</li></ul></div>
+          <div class="cons"><ul><li>Vendor lock-in</li><li>Poor docs</li><li>No escape hatch</li></ul></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Criteria Matrix -->
+  <section>
+    <h2>Criteria matrix</h2>
+    <div class="panel table-wrap">
+      <table>
+        <thead>
+          <tr><th>Criteria</th><th>Weight</th><th>Option A</th><th>Option B</th><th>Option C</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Integration cost</td><td>High</td><td><span class="badge olive">Low</span></td><td><span class="badge clay">Medium</span></td><td><span class="badge olive">Low</span></td></tr>
+          <tr><td>Performance</td><td>High</td><td><span class="badge clay">Fair</span></td><td><span class="badge olive">Excellent</span></td><td><span class="badge clay">Fair</span></td></tr>
+          <tr><td>Community</td><td>Medium</td><td><span class="badge olive">Active</span></td><td><span class="badge olive">Active</span></td><td><span class="badge rust">Declining</span></td></tr>
+          <tr><td>Vendor lock-in</td><td>Medium</td><td><span class="badge olive">None</span></td><td><span class="badge clay">Some</span></td><td><span class="badge rust">High</span></td></tr>
+          <tr><td>Maturity</td><td>Low</td><td><span class="badge">3+ years</span></td><td><span class="badge">2 years</span></td><td><span class="badge">5+ years</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Evidence -->
+  <section>
+    <h2>Evidence</h2>
+    <details>
+      <summary>PoC results: Option B under production-like load</summary>
+      <div class="details-body">
+        <p><strong>Setup:</strong> Describe environment, workload, constraints.</p>
+        <p><strong>Result:</strong> Key metrics — p95 latency, throughput, error rate.</p>
+        <p><strong>Interpretation:</strong> What this means for our system.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Production references and adoption signals</summary>
+      <div class="details-body">
+        <p>List companies, use cases, scale, and relevant learnings.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Rejected: Option C disqualification details</summary>
+      <div class="details-body">
+        <p>Explain why this option was ruled out despite its strengths.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Recommendation Band -->
+  <section>
+    <h2>Decision</h2>
+    <div class="recommendation">
+      <h3>Recommended: Option B</h3>
+      <p><strong>Confidence:</strong> High — validated by PoC and two production references at similar scale.</p>
+      <p><strong>Fallback:</strong> Option A if integration timeline exceeds 2 sprints.</p>
+      <p><strong>Next action:</strong> Start with integration spike in the payments service (1 week).</p>
+      <p><strong>Unresolved:</strong> Need to verify license compatibility with enterprise tier.</p>
+    </div>
+  </section>
+
+  <!-- Actions -->
+  <div class="btn-group">
+    <button class="btn" data-copy="Recommendation: Option B. High confidence. Next: integration spike in payments service (1 week). Fallback: Option A.">Copy research brief</button>
+    <button class="btn secondary">Export as ADR</button>
+  </div>
+
+</main>
+
+<script>
+  function setCopyState(button, label, className) {
+    var original = button.dataset.originalLabel || button.textContent;
+    button.dataset.originalLabel = original;
+    button.textContent = label;
+    button.classList.add(className);
+    setTimeout(function() {
+      button.textContent = original;
+      button.classList.remove(className);
+    }, 1400);
+  }
+
+  function selectTextFallback(text) {
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      return document.execCommand("copy");
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  document.querySelectorAll("[data-copy]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var text = btn.getAttribute("data-copy") || "";
+      function copied() {
+        setCopyState(btn, "Copied", "copied");
+      }
+      function selected() {
+        setCopyState(btn, "Selected", "selected");
+      }
+      function fallback() {
+        if (selectTextFallback(text)) copied();
+        else selected();
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(copied, fallback);
+      } else {
+        fallback();
+      }
+    });
+  });
+</script>
+</body>
+</html>

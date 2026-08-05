@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Review</title>
+<style>
+  :root {
+    --ivory: #FAF9F5;
+    --paper: #FFFFFF;
+    --slate: #141413;
+    --clay: #D97757;
+    --clay-d: #B85C3E;
+    --oat: #E3DACC;
+    --olive: #788C5D;
+    --rust: #B04A3F;
+    --gray-100: #F0EEE6;
+    --gray-300: #D1CFC5;
+    --gray-500: #87867F;
+    --gray-700: #3D3D3A;
+    --serif-latin: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --serif-cjk: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    --sans-latin: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --sans-cjk: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    --serif: var(--serif-latin), var(--serif-cjk);
+    --sans: var(--sans-latin), var(--sans-cjk);
+    --border: 1.5px solid var(--gray-300);
+    --radius-row: 8px;
+    --radius-panel: 12px;
+    --shadow-lift: 0 10px 30px rgba(20,20,19,.10);
+    --ease-standard: cubic-bezier(.16, 1, .3, 1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ivory: #1C1B19;
+      --paper: #262523;
+      --slate: #F5F4F0;
+      --clay: #E8936F;
+      --clay-d: #D97757;
+      --oat: #3D3832;
+      --olive: #8FA86E;
+      --rust: #D4635A;
+      --gray-100: #2E2D2A;
+      --gray-300: #4A4843;
+      --gray-500: #9C9B94;
+      --gray-700: #D9D8D2;
+      --shadow-lift: 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--gray-700);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 960px; margin: 0 auto; padding: 56px 28px 96px; }
+  .page, .panel, .file-card, .file-header, details { min-width: 0; }
+  :lang(zh) body,
+  body.zh {
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; color: var(--slate); letter-spacing: -.01em; }
+  :lang(zh) h1,
+  body.zh h1 { letter-spacing: 0; }
+  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 14px; }
+  h2 { font-size: 22px; margin: 42px 0 14px; }
+  h3 { font-size: 17px; margin: 0 0 8px; }
+  p { max-width: 720px; margin: 0 0 12px; }
+  code { font-family: var(--mono); font-size: .92em; background: var(--gray-100); border-radius: 4px; padding: 1px 4px; }
+
+  .panel { margin: 0; background: var(--paper); border: var(--border); border-radius: var(--radius-panel); padding: 22px; }
+  .content-stack { display: grid; gap: 14px; }
+  .content-stack > * { margin-block: 0; }
+
+  /* PR Header */
+  .pr-head .repo-line { font-family: var(--mono); font-size: 12px; color: var(--gray-500); margin-bottom: 8px; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; font-size: 13px; margin-top: 14px; }
+  .author { display: flex; align-items: center; gap: 10px; }
+  .muted { color: var(--gray-500); }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--oat); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--slate); font-weight: 600; }
+  .branch { font-family: var(--mono); color: var(--gray-500); font-size: 12px; }
+  .branch span { color: var(--clay); }
+  .stat .add { color: var(--olive); font-family: var(--mono); }
+  .stat .del { color: var(--rust); font-family: var(--mono); }
+
+  /* Risk Map */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 7px; border: var(--border); border-radius: 999px; background: var(--paper); font-family: var(--mono); font-size: 11.5px; padding: 5px 10px; cursor: pointer; transition: border-color 120ms ease; text-decoration: none; color: var(--gray-700); }
+  .chip:hover { border-color: var(--slate); }
+  .chip:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px rgba(92,124,163,.42); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-500); }
+  .dot.clay { background: var(--clay); }
+  .dot.olive { background: var(--olive); }
+  .dot.oat { background: var(--oat); }
+  .legend { font-size: 12px; color: var(--gray-500); margin-top: 10px; }
+  .legend .dot { display: inline-block; vertical-align: middle; }
+
+  /* File Cards */
+  .file-card { background: var(--paper); border: var(--border); border-radius: var(--radius-panel); margin-bottom: 16px; overflow: hidden; }
+  .file-header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--gray-100); }
+  .file-header .path { flex: 1; font-family: var(--mono); font-size: 13px; color: var(--slate); min-width: 0; overflow-wrap: anywhere; }
+  .file-header .stat { font-family: var(--mono); font-size: 12px; }
+  .file-body { padding: 16px; }
+  .summary-stat { margin-left: auto; }
+  .badge { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; padding: 3px 7px; border-radius: 5px; background: var(--gray-100); color: var(--gray-700); }
+  .badge.clay { background: rgba(217,119,87,.15); color: var(--clay-d); }
+  .badge.olive { background: rgba(120,140,93,.15); color: var(--slate); }
+
+  /* Code */
+  .code { background: var(--slate); color: #E8E6DE; border-radius: 10px; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; overflow-x: auto; padding: 16px; margin: 0; }
+  .code .add { background: rgba(120,140,93,.22); }
+  .code .del { background: rgba(217,119,87,.18); text-decoration: line-through; text-decoration-color: rgba(217,119,87,.6); }
+
+  /* Notes */
+  .note { border: var(--border); border-radius: var(--radius-row); padding: 12px 14px; margin-top: 12px; font-size: 14px; }
+  .note.attention { border-left: 3px solid var(--clay); }
+  .note.safe { border-left: 3px solid var(--olive); }
+
+  /* Callout */
+  .callout { border: var(--border); border-left: 3px solid var(--clay); border-radius: var(--radius-row); background: var(--paper); padding: 14px 16px; }
+  section > .callout + :is(.risk-map, .grid, .file-card, .table-wrap, .panel, details) { margin-top: 18px; }
+
+  /* Details */
+  details { background: var(--paper); border: var(--border); border-radius: var(--radius-row); overflow: hidden; }
+  details + details { margin-top: 10px; }
+  summary { cursor: pointer; list-style: none; padding: 12px 14px; color: var(--slate); font-family: var(--mono); font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "›"; color: var(--clay); font-size: 16px; transition: transform 150ms var(--ease-standard); }
+  details[open] summary::before { transform: rotate(90deg); }
+  details[open] summary { border-bottom: 1px solid var(--gray-100); }
+  .details-body { padding: 14px; }
+
+  /* Checklist */
+  .checklist { list-style: none; padding: 0; margin: 0; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--gray-100); }
+  .checklist li:last-child { border-bottom: 0; }
+  .checklist label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+  .checklist input[type="checkbox"] { appearance: none; width: 18px; height: 18px; border: var(--border); border-radius: 5px; background: var(--paper); cursor: pointer; flex-shrink: 0; margin-top: 1px; position: relative; }
+  .checklist input:checked { background: var(--olive); border-color: var(--olive); }
+  .checklist input:checked::after { content: "✓"; color: white; font-size: 12px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .checklist input:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgba(92,124,163,.35); }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
+
+  @media print {
+    body { background: #fff; color: #1a1a1a; font-size: 12pt; }
+    .page { max-width: 100%; padding: 0; }
+    .file-card, .panel, details { break-inside: avoid; border-color: #ccc; box-shadow: none; }
+    .code { background: #f5f5f5 !important; color: #1a1a1a !important; border: 1px solid #ccc; white-space: pre-wrap; }
+    h1, h2, h3 { break-after: avoid; }
+    a { color: inherit; }
+    a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; }
+    a[href^="#"]::after { content: ""; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- PR Header -->
+  <div class="panel pr-head">
+    <div class="repo-line">org/repo · Pull Request #123</div>
+    <h1>PR title goes here</h1>
+    <p>One-line summary of what this PR does and why.</p>
+    <div class="meta-row">
+      <div class="author"><span class="avatar">AB</span><div><strong>Author Name</strong><br><small class="muted">opened 1 day ago</small></div></div>
+      <div class="branch">feature/branch <span>→</span> main</div>
+      <div class="stat"><span class="add">+120</span> / <span class="del">−30</span> · 5 files</div>
+    </div>
+  </div>
+
+  <!-- What This Does -->
+  <h2>What this does</h2>
+  <div class="callout">
+    <strong>TL;DR.</strong> Describe the key behavioral change in plain language.
+  </div>
+
+  <!-- Risk Map -->
+  <h2>Risk map</h2>
+  <div class="chips">
+    <a href="#file-1" class="chip"><span class="dot clay"></span>critical-file.ts</a>
+    <a href="#file-2" class="chip"><span class="dot oat"></span>supporting-file.ts</a>
+    <a href="#file-3" class="chip"><span class="dot olive"></span>test-file.test.ts</a>
+  </div>
+  <div class="legend">
+    <span class="dot clay"></span> needs attention ·
+    <span class="dot oat"></span> worth a look ·
+    <span class="dot olive"></span> covered
+  </div>
+
+  <!-- File Cards -->
+  <h2>Changed files</h2>
+
+  <div class="file-card" id="file-1">
+    <div class="file-header">
+      <span class="path">src/critical-file.ts</span>
+      <span class="badge clay">needs attention</span>
+      <span class="stat"><span class="add">+54</span> / <span class="del">−12</span></span>
+    </div>
+    <div class="file-body">
+      <pre class="code"><span class="del">const oldApproach = doSomething();</span>
+<span class="add">const newApproach = doSomethingBetter({</span>
+<span class="add">  retries: 3,</span>
+<span class="add">  timeout: 5000,</span>
+<span class="add">});</span></pre>
+      <div class="note attention">
+        <strong>Line 18:</strong> Explain what needs reviewer attention here.
+      </div>
+    </div>
+  </div>
+
+  <details id="file-2">
+    <summary>src/supporting-file.ts <span class="badge summary-stat">+12 / −4</span></summary>
+    <div class="details-body">
+      <p>Low-risk supporting change. Describe briefly.</p>
+    </div>
+  </details>
+
+  <details id="file-3">
+    <summary>src/test-file.test.ts <span class="badge olive summary-stat">+40 / −0</span></summary>
+    <div class="details-body">
+      <p>New tests covering the critical path.</p>
+    </div>
+  </details>
+
+  <!-- Review Checklist -->
+  <h2>Review checklist</h2>
+  <ul class="checklist">
+    <li><label><input type="checkbox"><span>Error handling covers all failure modes</span></label></li>
+    <li><label><input type="checkbox"><span>No performance regression in hot path</span></label></li>
+    <li><label><input type="checkbox"><span>Tests cover edge cases</span></label></li>
+    <li><label><input type="checkbox"><span>Types are correct and complete</span></label></li>
+  </ul>
+
+</main>
+</body>
+</html>

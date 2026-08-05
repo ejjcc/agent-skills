@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagram Templates</title>
+<style>
+  :root {
+    --ivory: #FAF9F5;
+    --paper: #FFFFFF;
+    --slate: #141413;
+    --clay: #D97757;
+    --oat: #E3DACC;
+    --olive: #788C5D;
+    --rust: #B04A3F;
+    --gray-100: #F0EEE6;
+    --gray-300: #D1CFC5;
+    --gray-500: #87867F;
+    --gray-700: #3D3D3A;
+    --serif-latin: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --serif-cjk: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    --sans-latin: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --sans-cjk: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    --serif: var(--serif-latin), var(--serif-cjk);
+    --sans: var(--sans-latin), var(--sans-cjk);
+    --border: 1.5px solid var(--gray-300);
+    --radius-panel: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ivory: #1C1B19;
+      --paper: #262523;
+      --slate: #F5F4F0;
+      --clay: #E8936F;
+      --oat: #3D3832;
+      --olive: #8FA86E;
+      --rust: #D4635A;
+      --gray-100: #2E2D2A;
+      --gray-300: #4A4843;
+      --gray-500: #9C9B94;
+      --gray-700: #D9D8D2;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--gray-700);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  main { max-width: 1040px; margin: 0 auto; padding: 48px 24px 80px; }
+  h1, h2 { font-family: var(--serif); font-weight: 500; color: var(--slate); letter-spacing: -.01em; }
+  h1 { margin: 0 0 12px; font-size: 38px; }
+  h2 { margin: 36px 0 12px; font-size: 24px; }
+  p { margin: 0 0 14px; }
+  .panel {
+    margin: 0;
+    padding: 20px;
+    border: var(--border);
+    border-radius: var(--radius-panel);
+    background: var(--paper);
+    min-width: 0;
+  }
+  .diagram-shell {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .diagram-shell svg {
+    display: block;
+    min-width: 680px;
+    max-width: 100%;
+    height: auto;
+  }
+  .diagram-node {
+    fill: var(--paper);
+    stroke: var(--gray-300);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .diagram-node.is-hot {
+    stroke: var(--clay);
+    stroke-width: 2;
+  }
+  .diagram-node.is-stable {
+    stroke: var(--olive);
+  }
+  .diagram-edge {
+    fill: none;
+    stroke: var(--gray-500);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .diagram-edge.is-hot {
+    stroke: var(--clay);
+    stroke-width: 2;
+  }
+  .diagram-edge.is-optional {
+    stroke-dasharray: 4;
+  }
+  .diagram-region {
+    fill: var(--oat);
+    opacity: .22;
+    stroke: var(--gray-300);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .diagram-mask {
+    fill: var(--paper);
+    stroke: var(--gray-300);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .diagram-label {
+    fill: var(--slate);
+    font-family: var(--sans);
+    font-size: 12px;
+  }
+  .diagram-label-mono {
+    fill: var(--gray-700);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .04em;
+  }
+  .diagram-note {
+    fill: var(--gray-500);
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+  .diagram-arrow {
+    fill: var(--gray-500);
+  }
+  .diagram-arrow.is-hot {
+    fill: var(--clay);
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Diagram Templates</h1>
+  <p>Copy the closest SVG and keep the tokenized classes. Replace labels and coordinates; do not replace classes with hard-coded hex colors.</p>
+
+  <h2>Architecture</h2>
+  <figure class="panel diagram-shell">
+    <svg viewBox="0 0 720 270" role="img" aria-label="Layered architecture template">
+      <title>Layered architecture template</title>
+      <desc>Client sends requests to gateway, gateway calls worker, worker writes to store. The hot path is gateway to worker.</desc>
+      <defs>
+        <marker id="arch-arrow" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path class="diagram-arrow" d="M0,0 L8,4 L0,8 Z"></path>
+        </marker>
+        <marker id="arch-arrow-hot" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path class="diagram-arrow is-hot" d="M0,0 L8,4 L0,8 Z"></path>
+        </marker>
+      </defs>
+      <rect class="diagram-region" x="32" y="32" width="656" height="58" rx="10"></rect>
+      <rect class="diagram-region" x="32" y="112" width="656" height="58" rx="10"></rect>
+      <rect class="diagram-region" x="32" y="192" width="656" height="46" rx="10"></rect>
+      <rect class="diagram-mask" x="48" y="24" width="74" height="20" rx="4"></rect>
+      <text class="diagram-label-mono" x="85" y="38" text-anchor="middle">CLIENT</text>
+      <rect class="diagram-mask" x="48" y="104" width="68" height="20" rx="4"></rect>
+      <text class="diagram-label-mono" x="82" y="118" text-anchor="middle">API</text>
+      <rect class="diagram-mask" x="48" y="184" width="82" height="20" rx="4"></rect>
+      <text class="diagram-label-mono" x="89" y="198" text-anchor="middle">STORAGE</text>
+      <line class="diagram-edge" x1="234" y1="78" x2="290" y2="116" marker-end="url(#arch-arrow)"></line>
+      <line class="diagram-edge is-hot" x1="360" y1="150" x2="360" y2="184" marker-end="url(#arch-arrow-hot)"></line>
+      <line class="diagram-edge is-optional" x1="430" y1="150" x2="530" y2="190"></line>
+      <rect class="diagram-node" x="160" y="50" width="148" height="34" rx="8"></rect>
+      <text class="diagram-label" x="234" y="72" text-anchor="middle">Web Client</text>
+      <rect class="diagram-node is-hot" x="290" y="122" width="140" height="34" rx="8"></rect>
+      <text class="diagram-label" x="360" y="144" text-anchor="middle">Gateway</text>
+      <rect class="diagram-node is-stable" x="308" y="202" width="104" height="24" rx="6"></rect>
+      <text class="diagram-label-mono" x="360" y="218" text-anchor="middle">Store</text>
+      <rect class="diagram-node" x="500" y="202" width="92" height="24" rx="6"></rect>
+      <text class="diagram-label-mono" x="546" y="218" text-anchor="middle">Queue</text>
+    </svg>
+  </figure>
+
+  <h2>Sequence</h2>
+  <figure class="panel diagram-shell">
+    <svg viewBox="0 0 720 300" role="img" aria-label="Sequence diagram template">
+      <title>Sequence diagram template</title>
+      <desc>User triggers a request, API validates it, worker writes the result, and API returns success.</desc>
+      <defs>
+        <marker id="seq-arrow" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path class="diagram-arrow" d="M0,0 L8,4 L0,8 Z"></path>
+        </marker>
+        <marker id="seq-arrow-hot" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path class="diagram-arrow is-hot" d="M0,0 L8,4 L0,8 Z"></path>
+        </marker>
+      </defs>
+      <rect class="diagram-node" x="70" y="28" width="110" height="32" rx="7"></rect>
+      <rect class="diagram-node is-hot" x="250" y="28" width="110" height="32" rx="7"></rect>
+      <rect class="diagram-node" x="430" y="28" width="110" height="32" rx="7"></rect>
+      <rect class="diagram-node is-stable" x="590" y="28" width="90" height="32" rx="7"></rect>
+      <text class="diagram-label" x="125" y="49" text-anchor="middle">Client</text>
+      <text class="diagram-label" x="305" y="49" text-anchor="middle">API</text>
+      <text class="diagram-label" x="485" y="49" text-anchor="middle">Worker</text>
+      <text class="diagram-label" x="635" y="49" text-anchor="middle">Store</text>
+      <line class="diagram-edge is-optional" x1="125" y1="64" x2="125" y2="260"></line>
+      <line class="diagram-edge is-optional" x1="305" y1="64" x2="305" y2="260"></line>
+      <line class="diagram-edge is-optional" x1="485" y1="64" x2="485" y2="260"></line>
+      <line class="diagram-edge is-optional" x1="635" y1="64" x2="635" y2="260"></line>
+      <line class="diagram-edge" x1="128" y1="98" x2="296" y2="98" marker-end="url(#seq-arrow)"></line>
+      <rect class="diagram-mask" x="183" y="84" width="58" height="18" rx="4"></rect>
+      <text class="diagram-label-mono" x="212" y="97" text-anchor="middle">POST</text>
+      <line class="diagram-edge is-hot" x1="308" y1="144" x2="476" y2="144" marker-end="url(#seq-arrow-hot)"></line>
+      <rect class="diagram-mask" x="360" y="130" width="66" height="18" rx="4"></rect>
+      <text class="diagram-label-mono" x="393" y="143" text-anchor="middle">enqueue</text>
+      <line class="diagram-edge" x1="488" y1="190" x2="626" y2="190" marker-end="url(#seq-arrow)"></line>
+      <rect class="diagram-mask" x="532" y="176" width="50" height="18" rx="4"></rect>
+      <text class="diagram-label-mono" x="557" y="189" text-anchor="middle">WRITE</text>
+      <line class="diagram-edge is-optional" x1="302" y1="236" x2="134" y2="236" marker-end="url(#seq-arrow)"></line>
+      <text class="diagram-note" x="174" y="228">return 202</text>
+    </svg>
+  </figure>
+
+  <h2>Timeline</h2>
+  <figure class="panel diagram-shell">
+    <svg viewBox="0 0 720 220" role="img" aria-label="Timeline template">
+      <title>Timeline template</title>
+      <desc>Deploy starts, metrics regress, mitigation begins, and the fix is verified.</desc>
+      <line class="diagram-edge" x1="72" y1="112" x2="648" y2="112"></line>
+      <circle class="diagram-node" cx="118" cy="112" r="9"></circle>
+      <circle class="diagram-node is-hot" cx="300" cy="112" r="11"></circle>
+      <circle class="diagram-node" cx="462" cy="112" r="9"></circle>
+      <circle class="diagram-node is-stable" cx="602" cy="112" r="9"></circle>
+      <rect class="diagram-mask" x="72" y="62" width="92" height="24" rx="5"></rect>
+      <text class="diagram-label-mono" x="118" y="78" text-anchor="middle">10:02 deploy</text>
+      <rect class="diagram-mask" x="246" y="134" width="108" height="24" rx="5"></rect>
+      <text class="diagram-label-mono" x="300" y="150" text-anchor="middle">10:19 regress</text>
+      <rect class="diagram-mask" x="414" y="62" width="96" height="24" rx="5"></rect>
+      <text class="diagram-label-mono" x="462" y="78" text-anchor="middle">10:27 rollback</text>
+      <rect class="diagram-mask" x="556" y="134" width="92" height="24" rx="5"></rect>
+      <text class="diagram-label-mono" x="602" y="150" text-anchor="middle">10:44 stable</text>
+    </svg>
+  </figure>
+</main>
+</body>
+</html>

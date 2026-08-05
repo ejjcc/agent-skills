@@ -1,0 +1,14 @@
+interface:
+  display_name: "Engineering Artifact Design"
+  short_description: "Build warm editorial HTML artifacts for software R&D research, technical understanding, and decision-making."
+  default_prompt: "Use the Engineering Artifact Design skill to build a self-contained software R&D research or understanding artifact in the warm editorial style."
+  tags:
+    - design
+    - html
+    - engineering
+    - documentation
+  capabilities:
+    - "Create self-contained HTML artifacts for code reviews, architecture explainers, technical research, and decision records"
+    - "Apply a warm editorial visual system: ivory/paper/slate/clay palette, serif headings, mono metadata, tokenized inline SVG diagrams"
+    - "Support 14+ page patterns: Index, Code Review, Architecture, Concept, Research, Process, Incident, ADR, Migration, API Contract, Performance, Security, Test, Release, Onboarding, Audit, Tool/Editor"
+    - "Include dark mode, print styles, accessibility (WCAG AA), and reduced-motion support"

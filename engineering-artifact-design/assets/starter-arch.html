@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architecture Overview</title>
+<style>
+  :root {
+    --ivory: #FAF9F5;
+    --paper: #FFFFFF;
+    --slate: #141413;
+    --clay: #D97757;
+    --clay-d: #B85C3E;
+    --oat: #E3DACC;
+    --olive: #788C5D;
+    --rust: #B04A3F;
+    --info: #5C7CA3;
+    --gray-100: #F0EEE6;
+    --gray-300: #D1CFC5;
+    --gray-500: #87867F;
+    --gray-700: #3D3D3A;
+    --serif-latin: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --serif-cjk: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    --sans-latin: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --sans-cjk: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    --serif: var(--serif-latin), var(--serif-cjk);
+    --sans: var(--sans-latin), var(--sans-cjk);
+    --border: 1.5px solid var(--gray-300);
+    --radius-row: 8px;
+    --radius-panel: 12px;
+    --shadow-lift: 0 10px 30px rgba(20,20,19,.10);
+    --ease-standard: cubic-bezier(.16, 1, .3, 1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ivory: #1C1B19;
+      --paper: #262523;
+      --slate: #F5F4F0;
+      --clay: #E8936F;
+      --clay-d: #D97757;
+      --oat: #3D3832;
+      --olive: #8FA86E;
+      --rust: #D4635A;
+      --info: #7FA0C7;
+      --gray-100: #2E2D2A;
+      --gray-300: #4A4843;
+      --gray-500: #9C9B94;
+      --gray-700: #D9D8D2;
+      --shadow-lift: 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--gray-700);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 1080px; margin: 0 auto; padding: 56px 28px 96px; }
+  .page, section, .panel, .glance-item, .info-row, .boundary { min-width: 0; }
+  :lang(zh) body,
+  body.zh {
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; color: var(--slate); letter-spacing: -.01em; }
+  :lang(zh) h1,
+  body.zh h1 { letter-spacing: 0; }
+  h1 { font-size: clamp(28px, 4vw, 38px); line-height: 1.15; margin: 0 0 14px; }
+  h2 { font-size: 22px; margin: 42px 0 14px; }
+  h3 { font-size: 17px; margin: 0 0 8px; }
+  p { max-width: 720px; margin: 0 0 12px; }
+  code { font-family: var(--mono); font-size: .92em; background: var(--gray-100); border-radius: 4px; padding: 1px 4px; }
+  a { color: var(--clay); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 10px; }
+  .panel { margin: 0; background: var(--paper); border: var(--border); border-radius: var(--radius-panel); padding: 22px; }
+  .diagram-shell { overflow-x: auto; overflow-y: hidden; }
+  .diagram-shell svg { display: block; min-width: 720px; max-width: 100%; height: auto; }
+  .diagram-band { fill: var(--oat); opacity: .28; }
+  .diagram-band.is-soft { opacity: .18; }
+  .diagram-band.is-faint { opacity: .12; }
+  .diagram-node { fill: var(--paper); stroke: var(--gray-300); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .diagram-node.is-hot { stroke: var(--clay); stroke-width: 2; }
+  .diagram-node.is-stable { stroke: var(--olive); }
+  .diagram-node.is-optional { stroke-dasharray: 4; }
+  .diagram-edge { fill: none; stroke: var(--gray-500); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .diagram-edge.is-hot { stroke: var(--clay); stroke-width: 2; }
+  .diagram-edge.is-optional { stroke-width: 1; stroke-dasharray: 4; }
+  .diagram-label { fill: var(--slate); font-family: var(--sans); font-size: 12px; }
+  .diagram-label-mono { fill: var(--gray-700); font-family: var(--mono); font-size: 10px; letter-spacing: .06em; }
+  .diagram-label-muted { fill: var(--gray-500); font-family: var(--mono); font-size: 10px; }
+  .diagram-mask { fill: var(--paper); stroke: var(--gray-300); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .diagram-arrow { fill: var(--gray-500); }
+  .diagram-arrow.is-hot { fill: var(--clay); }
+  .content-stack { display: grid; gap: 14px; }
+  .content-stack > * { margin-block: 0; }
+  .callout { border: var(--border); border-left: 3px solid var(--clay); border-radius: var(--radius-row); background: var(--paper); padding: 14px 16px; }
+  section > .callout + :is(.glance-grid, .grid, .table-wrap, .diagram-shell, .panel, details) { margin-top: 18px; }
+
+  /* Chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 7px; border: var(--border); border-radius: 999px; background: var(--paper); font-family: var(--mono); font-size: 11.5px; padding: 5px 10px; cursor: pointer; transition: border-color 120ms ease; text-decoration: none; color: var(--gray-700); }
+  .chip:hover { border-color: var(--slate); }
+  .chip:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px rgba(92,124,163,.42); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-500); }
+  .dot.clay { background: var(--clay); }
+  .dot.olive { background: var(--olive); }
+  .dot.oat { background: var(--oat); }
+  .dot.rust { background: var(--rust); }
+  .badge { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; padding: 3px 7px; border-radius: 5px; background: var(--gray-100); color: var(--gray-700); }
+  .badge.clay { background: rgba(217,119,87,.15); color: var(--clay-d); }
+  .badge.olive { background: rgba(120,140,93,.15); color: var(--slate); }
+
+  /* At a Glance */
+  .glance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 14px; }
+  .glance-item { padding: 14px; border: var(--border); border-radius: var(--radius-row); background: var(--paper); }
+  .glance-item .label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 4px; }
+  .glance-item .value { font-size: 14px; color: var(--slate); font-weight: 500; }
+
+  /* Key Files */
+  .adaptive-info-list { display: grid; container-type: inline-size; }
+  .info-row { display: grid; grid-template-columns: minmax(180px, 1.1fr) auto minmax(16em, 1.4fr); gap: 8px 14px; align-items: start; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+  .info-row:last-child { border-bottom: 0; }
+  .info-row .path { min-width: 0; overflow-wrap: anywhere; font-family: var(--mono); font-size: 13px; color: var(--slate); }
+  .info-row .desc { min-width: 16em; }
+  @container (max-width: 620px) {
+    .info-row { grid-template-columns: minmax(0, 1fr) auto; }
+    .info-row .desc { grid-column: 1 / -1; min-width: 0; }
+  }
+
+  /* Boundary Layers */
+  .boundary { border: 2px dashed var(--gray-300); border-radius: var(--radius-panel); padding: 16px; margin-top: 16px; position: relative; }
+  .boundary .boundary-label { position: absolute; top: -10px; left: 16px; background: var(--ivory); padding: 0 8px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: var(--gray-500); }
+  .boundary.trust { border-color: var(--clay); }
+  .boundary.trust .boundary-label { color: var(--clay-d); }
+  .boundary + .boundary { margin-top: 20px; }
+
+  /* Details */
+  details { background: var(--paper); border: var(--border); border-radius: var(--radius-row); overflow: hidden; }
+  details + details { margin-top: 10px; }
+  summary { cursor: pointer; list-style: none; padding: 12px 14px; color: var(--slate); font-family: var(--mono); font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "›"; color: var(--clay); font-size: 16px; transition: transform 150ms var(--ease-standard); }
+  details[open] summary::before { transform: rotate(90deg); }
+  details[open] summary { border-bottom: 1px solid var(--gray-100); }
+  .details-body { padding: 14px; }
+
+  /* Buttons */
+  .btn { appearance: none; border: 1.5px solid var(--slate); border-radius: 999px; background: var(--slate); color: var(--ivory); cursor: pointer; font-family: var(--mono); font-size: 12px; padding: 9px 14px; transition: background 120ms ease; }
+  .btn:hover { background: var(--gray-700); }
+  .btn.secondary { background: transparent; color: var(--gray-700); border-color: var(--gray-300); }
+  .btn:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px rgba(92,124,163,.42); }
+  .btn.copied { background: var(--olive); border-color: var(--olive); }
+  .btn.selected { background: var(--info); border-color: var(--info); }
+  .actions { margin-top: 40px; }
+  .risk-details { margin-top: 16px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  @media (max-width: 720px) {
+    .info-row { grid-template-columns: minmax(0, 1fr) auto; }
+    .info-row .desc { grid-column: 1 / -1; min-width: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; } }
+  @media print {
+    body { background: #fff; color: #1a1a1a; }
+    .btn, .chips { display: none; }
+    .panel, .glance-item, details { break-inside: avoid; border-color: #ccc; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- Header -->
+  <header>
+    <div class="eyebrow">Architecture / system-name</div>
+    <h1>System Architecture Overview</h1>
+    <p>One-line responsibility: what this system does, who it serves, and its primary boundary.</p>
+  </header>
+
+  <!-- At a Glance -->
+  <section>
+    <h2>At a glance</h2>
+    <div class="glance-grid">
+      <div class="glance-item">
+        <div class="label">Entry points</div>
+        <div class="value">REST API, WebSocket</div>
+      </div>
+      <div class="glance-item">
+        <div class="label">Data stores</div>
+        <div class="value">PostgreSQL, Redis</div>
+      </div>
+      <div class="glance-item">
+        <div class="label">External systems</div>
+        <div class="value">Auth0, Stripe</div>
+      </div>
+      <div class="glance-item">
+        <div class="label">Owner</div>
+        <div class="value">Platform team</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Map -->
+  <section>
+    <h2>Architecture map</h2>
+    <div class="panel diagram-shell">
+      <svg viewBox="0 0 720 260" role="img" aria-label="System architecture diagram">
+        <title>System architecture diagram</title>
+        <desc>Client applications enter through the API gateway. Task service writes to PostgreSQL; Redis and Notify service are optional paths.</desc>
+        <defs>
+          <marker id="arr" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path class="diagram-arrow" d="M0,0 L8,4 L0,8 Z"/>
+          </marker>
+          <marker id="arr-hot" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path class="diagram-arrow is-hot" d="M0,0 L8,4 L0,8 Z"/>
+          </marker>
+        </defs>
+        <!-- Layer regions -->
+        <rect class="diagram-band" x="20" y="15" width="680" height="55" rx="8"/>
+        <rect class="diagram-mask" x="34" y="33" width="58" height="20" rx="3"/>
+        <text class="diagram-label-mono" x="63" y="47" text-anchor="middle">CLIENT</text>
+        <rect class="diagram-band is-soft" x="20" y="90" width="680" height="55" rx="8"/>
+        <rect class="diagram-mask" x="34" y="108" width="76" height="20" rx="3"/>
+        <text class="diagram-label-mono" x="72" y="122" text-anchor="middle">API LAYER</text>
+        <rect class="diagram-band is-faint" x="20" y="165" width="680" height="55" rx="8"/>
+        <rect class="diagram-mask" x="34" y="183" width="72" height="20" rx="3"/>
+        <text class="diagram-label-mono" x="70" y="197" text-anchor="middle">SERVICES</text>
+
+        <!-- Arrows stop before target boxes so node fills do not cover arrowheads. -->
+        <line class="diagram-edge" x1="225" y1="60" x2="280" y2="92" marker-end="url(#arr)"/>
+        <line class="diagram-edge" x1="405" y1="60" x2="320" y2="92" marker-end="url(#arr)"/>
+        <line class="diagram-edge" x1="280" y1="135" x2="200" y2="167" marker-end="url(#arr)"/>
+        <line class="diagram-edge is-hot" x1="300" y1="135" x2="360" y2="167" marker-end="url(#arr-hot)"/>
+        <line class="diagram-edge is-optional" x1="320" y1="135" x2="512" y2="173"/>
+        <line class="diagram-edge" x1="360" y1="210" x2="310" y2="227" marker-end="url(#arr)"/>
+        <line class="diagram-edge is-optional" x1="360" y1="210" x2="430" y2="235"/>
+        <rect class="diagram-mask" x="382" y="145" width="42" height="16" rx="3"/>
+        <text class="diagram-label-muted" x="403" y="156" text-anchor="middle">async</text>
+        <rect class="diagram-mask" x="368" y="216" width="42" height="16" rx="3"/>
+        <text class="diagram-label-muted" x="389" y="227" text-anchor="middle">cache</text>
+
+        <!-- Client layer -->
+        <rect class="diagram-node" x="160" y="25" width="130" height="35" rx="7"/>
+        <text class="diagram-label" x="225" y="47" text-anchor="middle">Web App</text>
+        <rect class="diagram-node" x="340" y="25" width="130" height="35" rx="7"/>
+        <text class="diagram-label" x="405" y="47" text-anchor="middle">Mobile App</text>
+
+        <!-- API layer -->
+        <rect class="diagram-node is-hot" x="220" y="100" width="160" height="35" rx="7"/>
+        <text class="diagram-label" x="300" y="122" text-anchor="middle">API Gateway</text>
+
+        <!-- Services layer -->
+        <rect class="diagram-node" x="140" y="175" width="120" height="35" rx="7"/>
+        <text class="diagram-label" x="200" y="197" text-anchor="middle">Auth Svc</text>
+        <rect class="diagram-node is-hot" x="300" y="175" width="120" height="35" rx="7"/>
+        <text class="diagram-label" x="360" y="197" text-anchor="middle">Task Svc</text>
+        <rect class="diagram-node" x="460" y="175" width="120" height="35" rx="7"/>
+        <text class="diagram-label" x="520" y="197" text-anchor="middle">Notify Svc</text>
+
+        <!-- Storage -->
+        <rect class="diagram-node is-stable" x="260" y="235" width="100" height="22" rx="5"/>
+        <text class="diagram-label-mono" x="310" y="250" text-anchor="middle">PostgreSQL</text>
+        <rect class="diagram-node is-optional" x="400" y="235" width="80" height="22" rx="5"/>
+        <text class="diagram-label-muted" x="440" y="250" text-anchor="middle">Redis</text>
+      </svg>
+      <p class="sr-only">Hot path: client request crosses API Gateway, enters Task Svc, and writes to PostgreSQL. Notify Svc and Redis are optional background paths.</p>
+    </div>
+  </section>
+
+  <!-- Key Files -->
+  <section>
+    <h2>Key files</h2>
+    <div class="panel adaptive-info-list">
+      <div class="info-row">
+        <span class="path">src/gateway/router.ts</span>
+        <span class="badge clay">route</span>
+        <span class="desc">Main API router — maps endpoints to service handlers.</span>
+      </div>
+      <div class="info-row">
+        <span class="path">src/services/task/handler.ts</span>
+        <span class="badge clay">handler</span>
+        <span class="desc">Task CRUD logic and optimistic update coordination.</span>
+      </div>
+      <div class="info-row">
+        <span class="path">src/services/auth/middleware.ts</span>
+        <span class="badge">middleware</span>
+        <span class="desc">JWT validation and role-based access control.</span>
+      </div>
+      <div class="info-row">
+        <span class="path">src/db/schema.prisma</span>
+        <span class="badge olive">schema</span>
+        <span class="desc">Database schema definition and migrations.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Boundaries -->
+  <section>
+    <h2>Boundaries</h2>
+    <div class="boundary trust">
+      <span class="boundary-label">Trust boundary</span>
+      <p>All requests crossing from client to API gateway are authenticated via JWT. Internal service-to-service calls use mTLS.</p>
+    </div>
+    <div class="boundary">
+      <span class="boundary-label">Persistence boundary</span>
+      <p>Only Task Svc writes to PostgreSQL. Other services read via a replicated read-only connection.</p>
+    </div>
+  </section>
+
+  <!-- Risks -->
+  <section>
+    <h2>Risks</h2>
+    <div class="chips">
+      <span class="chip"><span class="dot clay"></span>Single point of failure: API Gateway</span>
+      <span class="chip"><span class="dot oat"></span>No circuit breaker on Notify Svc</span>
+      <span class="chip"><span class="dot olive"></span>Auth Svc: well-tested, stable</span>
+    </div>
+
+    <details class="risk-details">
+      <summary>Detailed risk analysis</summary>
+      <div class="details-body">
+        <p>Expand this section to document failure modes, coupling hotspots, and missing observability.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Copy Action -->
+  <section class="actions">
+    <button class="btn" data-copy="Architecture summary: API Gateway → Task Svc → PostgreSQL. Trust boundary at gateway. Risk: SPOF on gateway.">Copy summary</button>
+  </section>
+
+</main>
+
+<script>
+  function setCopyState(button, label, className) {
+    var original = button.dataset.originalLabel || button.textContent;
+    button.dataset.originalLabel = original;
+    button.textContent = label;
+    button.classList.add(className);
+    setTimeout(function() {
+      button.textContent = original;
+      button.classList.remove(className);
+    }, 1400);
+  }
+
+  function selectTextFallback(text) {
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      return document.execCommand("copy");
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  document.querySelectorAll("[data-copy]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var text = btn.getAttribute("data-copy") || "";
+      function copied() {
+        setCopyState(btn, "Copied", "copied");
+      }
+      function selected() {
+        setCopyState(btn, "Selected", "selected");
+      }
+      function fallback() {
+        if (selectTextFallback(text)) copied();
+        else selected();
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(copied, fallback);
+      } else {
+        fallback();
+      }
+    });
+  });
+</script>
+</body>
+</html>
