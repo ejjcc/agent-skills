@@ -26,6 +26,7 @@ Vendor-shipped skills are intentionally not mirrored here — see [Related colle
 | [feishu-doc-update](./feishu-doc-update/) | 将本地 Markdown 变更同步回飞书文档（block 级直更/冲突修订版） |
 | [feishu-comment-loop](./feishu-comment-loop/) | 飞书文档评论处理闭环：分类处理、融入正文、resolve |
 | [lark-animated-flowchart](./lark-animated-flowchart/) | 生成动画流程图 HTML 并通过 HTML Box 嵌入飞书文档 |
+| [feishu-html-box](./feishu-html-box/) | 在飞书文档嵌入可执行 HTML 单页应用（HTML Box / 妙笔），含 window.magic 运行时 |
 
 ## Writing & Content
 
@@ -70,6 +71,7 @@ Vendor-shipped skills are intentionally not mirrored here — see [Related colle
 | [searxng-search](./searxng-search/) | 通过私有 SearXNG 实例搜索网络，支持多引擎聚合 |
 | [youtube-transcript](./youtube-transcript/) | 提取 YouTube 视频字幕/逐字稿，支持带/不带时间戳 |
 | [onchain-investigator](./onchain-investigator/) | 区块链地址链上数据调查分析（TRON / Ethereum 等） |
+| [cdp-fetch](./cdp-fetch/) | 通过本机 9222 共享 CDP 浏览器抓取登录态页面内容与网络请求 |
 
 ## Productivity
 
@@ -84,6 +86,7 @@ Vendor-shipped skills are intentionally not mirrored here — see [Related colle
 | [pua](./pua/) | 反懒惰模式：强制穷举所有可能方案后才能放弃 |
 | [post-test-cleanup](./post-test-cleanup/) | 测试完成后的扫尾清理，防止测试消息残留消耗 token |
 | [tmux-cli](./tmux-cli/) | 与其他 tmux 窗格中的 CLI Agent / 脚本通信 |
+| [interactive-shell](./interactive-shell/) | 交互式命令工作流：PTY session 或 tmux fallback 处理 OAuth/SSH/REPL |
 
 ---
 
