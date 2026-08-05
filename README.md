@@ -20,6 +20,7 @@ Personal skill collection for Claude Code.
 | [lark-calendar](./lark-calendar/) | 飞书日历：查看日程、创建会议、查询忙闲、推荐时段 |
 | [lark-contact](./lark-contact/) | 飞书通讯录：查询人员、搜索员工、获取 open_id |
 | [lark-doc](./lark-doc/) | 飞书云文档：创建、编辑、搜索文档，上传下载图片 |
+| [lark-doc-expert](./lark-doc-expert/) | 飞书文档专家层：block 结构诊断、原始 OpenAPI 访问、上传后格式修复 |
 | [lark-drive](./lark-drive/) | 飞书云空间：文件上传下载、目录管理、评论、权限 |
 | [lark-event](./lark-event/) | 飞书事件订阅：WebSocket 实时监听消息/通讯录/日历变更 |
 | [lark-im](./lark-im/) | 飞书即时通讯：收发消息、搜索聊天记录、管理群聊 |
@@ -112,7 +113,7 @@ Personal skill collection for Claude Code.
 
 ```bash
 # Install a skill in Claude Code
-/install-skill flyinghanger/agent-skills@<skill-name>
+/install-skill ejjcc/agent-skills@<skill-name>
 ```
 
 ## License
