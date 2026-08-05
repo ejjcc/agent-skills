@@ -1,6 +1,7 @@
 ---
 name: smart-ocr
-version: 1.0
+metadata:
+  version: 1.0.1
 description: |
   从图片中提取文字。基于 macOS Vision 框架，利用 Apple Neural Engine 硬件加速。
   支持中英混排、深色主题截图、高分辨率图片，单张 ~1 秒。

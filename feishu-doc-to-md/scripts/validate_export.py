@@ -16,12 +16,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("final_md", help="Path to the exported Markdown file")
     parser.add_argument(
         "--image-map",
-        help="Optional path to image-map.tsv. Defaults to <stem>.assets/image-map.tsv next to the markdown file.",
+        help="Optional path to image-map.tsv. Defaults to assets/image-map.tsv next to the markdown file (v2 layout), "
+        "falling back to <stem>.assets/image-map.tsv (v1 flat layout).",
     )
     return parser.parse_args()
 
 
 def infer_image_map(final_md: Path) -> Path:
+    # v2 layout (current): doc dir contains README.md + assets/image-map.tsv
+    v2 = final_md.parent / "assets" / "image-map.tsv"
+    if v2.exists():
+        return v2
+    # v1 layout (legacy flat): <stem>.assets/image-map.tsv
     return final_md.parent / f"{final_md.stem}.assets" / "image-map.tsv"
 
 

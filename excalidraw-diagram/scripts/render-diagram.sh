@@ -55,10 +55,10 @@ render_excalidraw_local() {
 </head><body style="background:#fff;margin:0;padding:20px"></body></html>
 HTMLEOF
   cp "$INPUT" "$TMPDIR/diagram.json"
-  npx agent-browser open "file://$TMPDIR/render-excalidraw.html" 2>/dev/null
+  browser-use open "file://$TMPDIR/render-excalidraw.html" 2>/dev/null
   sleep 3
-  npx agent-browser screenshot "$OUTPUT" 2>/dev/null
-  npx agent-browser close 2>/dev/null
+  browser-use screenshot "$OUTPUT" 2>/dev/null
+  browser-use close 2>/dev/null
   echo "Rendered: $OUTPUT (local Playwright)"
 }
 
@@ -80,10 +80,10 @@ render_drawio() {
 </body></html>
 HTMLEOF
   cp "$INPUT" "$TMPDIR/diagram.drawio"
-  npx agent-browser open "file://$TMPDIR/render-drawio.html" 2>/dev/null
+  browser-use open "file://$TMPDIR/render-drawio.html" 2>/dev/null
   sleep 4
-  npx agent-browser screenshot "$OUTPUT" 2>/dev/null
-  npx agent-browser close 2>/dev/null
+  browser-use screenshot "$OUTPUT" 2>/dev/null
+  browser-use close 2>/dev/null
   echo "Rendered: $OUTPUT (local Playwright)"
 }
 

@@ -1,5 +1,7 @@
 ---
 name: reqable-capture
+metadata:
+  version: 0.1.0
 description: 通过 Reqable 抓包获取登录态（Cookie/Token/Header），解决需要认证才能访问的页面或 API。当遇到 401/403、需要登录态、需要抓包、需要获取 Cookie 或 Auth Token 时使用。
 allowed-tools: Bash(open:*), Bash(curl:*), Bash(cat:*), Bash(python3:*), Bash(networksetup:*), Bash(jq:*), Read, Glob, Grep, Write
 ---

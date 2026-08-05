@@ -1,11 +1,12 @@
 ---
 name: ruminate
+metadata:
+  version: 1.0.1
 description: >-
   反刍——回顾当前会话的工作过程，提炼可沉淀的模式，判断是否需要新建或改进
   Skill、Rule、Hook。触发词：/ruminate、反刍、反思、复盘、沉淀、总结经验。
   也可在长会话结束前主动建议触发。
 user-invocable: true
-version: "1.0.0"
 ---
 
 # /ruminate — 反刍与沉淀

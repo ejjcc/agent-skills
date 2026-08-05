@@ -1,7 +1,9 @@
 ---
 name: tech-doc-writing
+metadata:
+  version: 0.1.0
 description: 技术文档写作规范。基于自顶向下的结构化表达原则，覆盖定主题、立框架、填内容、调排版四个阶段。当用户请求"写技术方案"、"写文档"、"review 文档"、"文档排版"、"改文档结构"时使用。
-argument-hint: <markdown_file> <action: draft|review|rewrite>
+argument-hint: "<markdown_file> <action: draft|review|rewrite>"
 user-invocable: true
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
@@ -106,6 +108,15 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 3. **避免口语化**：使用书面用语，精简表达
 4. **一图胜千言**：当需要大段文字描述逻辑关系时，优先用图表达
 5. **善用表格**：分类/分模块描述一系列事情时，表格是最佳工具
+6. **正面定义优先**：说清「是什么」和「不是什么」，少用「不是 A 而是 B」「与其 A 不如 B」等迂回句式。直接陈述边界，读者一眼就能判断
+7. **数据必须注明来源**：引用具体数字（统计、基准、实验结果）时，紧跟来源链接或出处说明。无来源的数据读者会当作编造
+
+#### 引用与参考格式
+
+- 正文中引用数据时，用行内链接标注来源：`据[某团队的统计](URL)，...`
+- 文末统一列 References，每条一行：`- [标题](URL) — 一句话说明价值`
+- 不列作者——标题和链接足够定位，作者信息容易过时
+- 只列正文实际引用或对读者有延伸价值的来源，不堆量
 
 ### 四、调排版
 

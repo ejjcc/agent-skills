@@ -1,12 +1,13 @@
 ---
 name: init-project
+metadata:
+  version: 1.0.1
 description: >-
   项目初始化器——为长周期开发项目生成结构化特性列表、进度日志和启动脚本。
   当用户请求「初始化项目」「项目启动」「长期项目」「init project」时使用。
   输入：项目需求描述（PRD、README、口头描述均可）。
 user-invocable: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
-version: "1.0.0"
 ---
 
 # /init-project — 长周期项目初始化

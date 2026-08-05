@@ -1,5 +1,7 @@
 ---
 name: eat
+metadata:
+  version: 0.1.0
 description: 像星之卡比一样吸收外部知识，将其内化为 Skill、Rule 或 AGENTS.md 更新。触发词：/eat、吃掉、消化、吸收。输入可以是 URL、GitHub 链接、代码片段、文章文字、技术文档等任意内容。
 ---
 

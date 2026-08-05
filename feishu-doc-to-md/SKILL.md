@@ -3,6 +3,7 @@ name: feishu-doc-to-md
 description: Export a Feishu/Lark wiki or docx URL/token into local Markdown with local image assets. Use when the user asks to convert 飞书/Lark 文档为 md, save a wiki/docx as Markdown, or preserve document images locally instead of leaving them remote.
 allowed-tools: Bash, Read
 metadata:
+  version: 2.0.1
   short-description: Export Feishu docs to local Markdown
 ---
 
@@ -32,20 +33,22 @@ Run the main exporter:
 python3 ~/.claude/skills/feishu-doc-to-md/scripts/export_feishu_doc.py "$DOC_URL_OR_TOKEN" --output-dir "$OUTPUT_DIR"
 ```
 
+**`--output-dir` 始终是"父目录"**，脚本会自动在其下建一个以文档标题命名的子目录，把 md + assets 都装进去。一份文档 = 一个自包含目录。
+
 Common choices:
 
-- Default export dir: omit `--output-dir`; the script uses `./feishu-exports/<source_token>/`
-- Workspace docs dir: pass `--output-dir docs`
-- Override the output file basename: add `--doc-name "Custom Name"`
+- Default: omit `--output-dir`; script writes to `./feishu-exports/<title>/`
+- Workspace wiki: pass `--output-dir wiki/my-project`; writes to `wiki/my-project/<title>/`
+- Override the title (affects both folder name and md basename): add `--doc-name "Custom Name"`
 
 The script prints a JSON summary with:
 
-- `final_md`
-- `raw_md`
-- `assets_dir`
-- `image_map`
-- `counts`
-- `unresolved`
+- `doc_dir` — self-contained directory; this is the thing to commit/move
+- `final_md` — `<doc_dir>/README.md`
+- `raw_md` — `<doc_dir>/<title>.raw.md` (kept for diffing/debugging)
+- `assets_dir` — `<doc_dir>/assets`
+- `image_map` — `<doc_dir>/assets/image-map.tsv`
+- `counts` / `unresolved`
 
 ## Validation
 
@@ -65,12 +68,20 @@ Treat these as hard failures:
 
 ## Outputs
 
-The exporter writes:
+The exporter always wraps a single document into a self-contained directory:
 
-- `<output_dir>/<doc_name>.raw.md`
-- `<output_dir>/<doc_name>.md`
-- `<output_dir>/<doc_name>.assets/images/*`
-- `<output_dir>/<doc_name>.assets/image-map.tsv`
+```
+<output_dir>/<title>/
+├── <source_token>.md      ← final rendered markdown (image refs use assets/images/...)
+├── <source_token>.raw.md  ← original raw markdown from OpenAPI (kept for diff/debug)
+└── assets/
+    ├── images/*           ← downloaded image/board assets
+    └── image-map.tsv      ← token → local path mapping
+```
+
+- **Folder name uses the human-readable title** — easy to find in a file tree.
+- **File basename uses the Feishu document token** — stable identifier that survives upstream title renames and unambiguously points back to the source doc.
+- Assets live in a plain `assets/` subdir (no `<title>.assets` sibling), so the whole doc is one self-contained directory you can move/commit/symlink atomically.
 
 ## Auth Model
 

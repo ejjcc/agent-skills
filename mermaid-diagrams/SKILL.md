@@ -1,11 +1,30 @@
 ---
 name: mermaid-diagrams
-description: Comprehensive guide for creating software diagrams using Mermaid syntax. Use when users need to create, visualize, or document software through diagrams including class diagrams (domain modeling, object-oriented design), sequence diagrams (application flows, API interactions, code execution), flowcharts (processes, algorithms, user journeys), entity relationship diagrams (database schemas), C4 architecture diagrams (system context, containers, components), state diagrams, git graphs, pie charts, gantt charts, or any other diagram type. Triggers include requests to "diagram", "visualize", "model", "map out", "show the flow", or when explaining system architecture, database design, code structure, or user/application flows.
+metadata:
+  version: 0.2.0
+description: >-
+  Create and maintain diagrams in Mermaid text syntax. Use when the user
+  explicitly requests Mermaid, a .mmd file, a Mermaid code block, or a diagram
+  embedded in Markdown, wiki, or docs. Supports flowcharts, sequence, class, ER,
+  C4, state, git, Gantt, and other Mermaid types. Do not trigger for a generic
+  request for a standalone rendered diagram; use fireworks-tech-graph for
+  default SVG+PNG delivery and excalidraw-diagram for .excalidraw/hand-drawn work.
 ---
 
 # Mermaid Diagramming
 
 Create professional software diagrams using Mermaid's text-based syntax. Mermaid renders diagrams from simple text definitions, making diagrams version-controllable, easy to update, and maintainable alongside code.
+
+## Routing Boundary
+
+- Use this skill only when Mermaid syntax or Markdown/wiki/docs embedding is
+  explicit in the request or destination.
+- Use `fireworks-tech-graph` for a standalone, directly openable technical image
+  delivered as SVG+PNG when no diagram format is specified.
+- Use `excalidraw-diagram` for an editable `.excalidraw` scene or an explicitly
+  hand-drawn/sketch-style diagram.
+- A generic mention of “diagram”, “visualize”, “model”, or “show the flow” is not
+  sufficient by itself to select Mermaid.
 
 ## Core Syntax Structure
 
@@ -199,19 +218,10 @@ flowchart LR
 - **Overcomplexity** - Split complex diagrams into multiple focused views
 - **Missing relationships** - Document all important connections between entities
 
-## When to Create Diagrams
+## Delivery
 
-**Always diagram when:**
-- Starting new projects or features
-- Documenting complex systems
-- Explaining architecture decisions
-- Designing database schemas
-- Planning refactoring efforts
-- Onboarding new team members
-
-**Use diagrams to:**
-- Align stakeholders on technical decisions
-- Document domain models collaboratively
-- Visualize data flows and system interactions
-- Plan before coding
-- Create living documentation that evolves with code
+- Write Mermaid into the requested Markdown/wiki/docs destination or return the
+  requested `.mmd`/code block.
+- Do not silently replace the requested Mermaid source with an SVG-only artifact.
+- If the user later requests exported image files, render the Mermaid source with
+  Mermaid CLI while retaining the source alongside the export.

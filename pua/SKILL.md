@@ -1,6 +1,7 @@
 ---
 name: pua
-version: 1.0.0
+metadata:
+  version: 1.0.1
 description: "Anti-laziness skill: forces exhaustive problem-solving before giving up. Triggers: '/pua', 'try harder', 'stop giving up', 'you keep failing', 'stop spinning', 'you broke it', 'why does this still not work', '加油', '别偷懒', '你再试试', '为什么还不行', '又错了', '能不能靠谱点', '不行啊', '降智了', '换个方法', 'PUA模式'."
 license: MIT
 ---

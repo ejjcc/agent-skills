@@ -1,6 +1,7 @@
 ---
 name: think-deeper
-version: 1.0
+metadata:
+  version: 1.0.1
 description: |
   提示词优化助手。通过主动思考和提问，帮助用户把模糊的想法变成清晰、完整、可执行的任务描述。
   触发词：帮我想想、优化提示词、我想做一个、帮我描述清楚、think deeper、

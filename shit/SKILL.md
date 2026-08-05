@@ -1,5 +1,7 @@
 ---
 name: shit
+metadata:
+  version: 0.1.0
 description: eat 的反向操作——代谢掉过时、冗余、冲突的 Skill、Rule 和 Memory。触发词：/shit、清理、代谢、断舍离、瘦身。
 ---
 

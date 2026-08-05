@@ -1,5 +1,7 @@
 ---
 name: image-to-svg
+metadata:
+  version: 0.1.0
 description: |
   Convert architecture diagrams, flowcharts, and other structured images (PNG/JPG) into clean, machine-readable SVG files. Use this skill whenever the user wants to: convert screenshots or images of diagrams into editable vector format; make diagram images parseable by programs; create SVG versions of architecture charts, flowcharts, or system diagrams; or replace raster images with text-based vector equivalents in Markdown files. Trigger on phrases like "convert image to SVG", "make this diagram editable", "turn this into vector", "make this parseable", or any request involving diagram images and programmatic readability.
 ---

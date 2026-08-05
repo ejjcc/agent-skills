@@ -1,5 +1,7 @@
 ---
 name: ip
+metadata:
+  version: 0.1.0
 description: 查看本机所有网络接口的 IP 地址，包括公网 IP、VPN、局域网等。当用户输入 /ip 时使用。
 allowed-tools: Bash(curl:*), Bash(ifconfig:*), Bash(python3:*)
 ---

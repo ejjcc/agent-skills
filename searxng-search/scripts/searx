@@ -3,9 +3,8 @@
 # Usage: searx <query> [--category <cat>] [--limit <n>] [--engines <engine>] [--json]
 set -euo pipefail
 
-SEARXNG_URL="${SEARXNG_URL:-https://search.riba2534.cn}"
-
 usage() {
+  local exit_code="${1:-2}"
   echo "Usage: searx <query> [--category <cat>] [--limit <n>] [--engines <engine>] [--json]"
   echo ""
   echo "Options:"
@@ -18,7 +17,7 @@ usage() {
   echo "  searx 'machine learning'"
   echo "  searx tokio --category cargo"
   echo "  searx express --category packages --engines npm"
-  exit 1
+  exit "$exit_code"
 }
 
 category="general"
@@ -29,52 +28,111 @@ query_parts=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --category|-c) category="$2"; shift 2 ;;
-    --limit|-l) limit="$2"; shift 2 ;;
-    --engines|-e) engines="$2"; shift 2 ;;
+    --category|-c)
+      [[ $# -ge 2 ]] || { echo "Error: $1 requires a value." >&2; usage; }
+      category="$2"; shift 2
+      ;;
+    --limit|-l)
+      [[ $# -ge 2 ]] || { echo "Error: $1 requires a value." >&2; usage; }
+      limit="$2"; shift 2
+      ;;
+    --engines|-e)
+      [[ $# -ge 2 ]] || { echo "Error: $1 requires a value." >&2; usage; }
+      engines="$2"; shift 2
+      ;;
     --json) json=true; shift ;;
-    --help|-h) usage ;;
+    --help|-h) usage 0 ;;
     *) query_parts+=("$1"); shift ;;
   esac
 done
 
 query="${query_parts[*]}"
 [[ -z "$query" ]] && usage
+[[ "$limit" =~ ^[1-9][0-9]*$ ]] || { echo "Error: --limit must be a positive integer." >&2; exit 2; }
 
-# Build URL
-url="${SEARXNG_URL}/search?q=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$query'))")&format=json&language=zh-CN"
-[[ "$category" != "general" ]] && url="${url}&categories=${category}"
-[[ -n "$engines" ]] && url="${url}&engines=${engines}"
+if [[ -z "${SEARXNG_URL:-}" ]]; then
+  echo "Error: SEARXNG_URL is required (for example, https://search.example.com)." >&2
+  echo "Configure a reachable SearXNG instance or use WebSearch instead." >&2
+  exit 2
+fi
 
-response=$(curl -s "$url")
+SEARXNG_URL="${SEARXNG_URL%/}"
+
+curl_fail=(--fail-with-body)
+if ! curl --help all 2>/dev/null | grep -q -- '--fail-with-body'; then
+  curl_fail=(--fail)
+  echo "Warning: this curl does not support --fail-with-body; using --fail." >&2
+fi
+
+response_file=$(mktemp)
+trap 'rm -f "$response_file"' EXIT
+
+curl_args=(
+  --silent
+  --show-error
+  "${curl_fail[@]}"
+  --connect-timeout 10
+  --max-time 30
+  --get
+  "${SEARXNG_URL}/search"
+  --data-urlencode "q=${query}"
+  --data-urlencode "format=json"
+  --data-urlencode "language=zh-CN"
+  --output "$response_file"
+)
+[[ "$category" != "general" ]] && curl_args+=(--data-urlencode "categories=${category}")
+[[ -n "$engines" ]] && curl_args+=(--data-urlencode "engines=${engines}")
+
+if ! curl "${curl_args[@]}"; then
+  echo "Error: SearXNG request failed for ${SEARXNG_URL}." >&2
+  exit 1
+fi
+
+if ! python3 - "$response_file" <<'PY'
+import json
+import sys
+
+try:
+    with open(sys.argv[1], encoding="utf-8") as response:
+        json.load(response)
+except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+    print(f"Error: SearXNG returned invalid JSON: {exc}", file=sys.stderr)
+    raise SystemExit(65)
+PY
+then
+  exit 65
+fi
 
 if [[ "$json" == "true" ]]; then
-  echo "$response"
+  cat "$response_file"
   exit 0
 fi
 
-# Parse and display results
-python3 -c "
-import json, sys
-data = json.loads(sys.stdin.read())
-results = data.get('results', [])[:${limit}]
-total = data.get('number_of_results', 0)
+python3 - "$response_file" "$limit" "$query" <<'PY'
+import json
+import sys
+
+response_file, limit, query = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+with open(response_file, encoding="utf-8") as response:
+    data = json.load(response)
+results = data.get("results", [])[:limit]
+total = data.get("number_of_results", 0)
 
 if not results:
-    print(f'No results found for: ${query}')
-    for s in data.get('suggestions', []):
-        print(f'  Suggestion: {s}')
-    sys.exit(0)
+    print(f"No results found for: {query}")
+    for suggestion in data.get("suggestions", []):
+        print(f"  Suggestion: {suggestion}")
+    raise SystemExit(0)
 
-for r in results:
-    print(f\"\033[32m{r['title']}\033[0m\")
-    print(f\"  URL: \033[34m{r['url']}\033[0m\")
-    engines = ', '.join(r.get('engines', []))
-    print(f'  Engines: {engines}')
-    content = r.get('content', '')
+for result in results:
+    print(f"\033[32m{result['title']}\033[0m")
+    print(f"  URL: \033[34m{result['url']}\033[0m")
+    engines = ", ".join(result.get("engines", []))
+    print(f"  Engines: {engines}")
+    content = result.get("content", "")
     if content:
-        print(f'  {content[:200]}')
+        print(f"  {content[:200]}")
     print()
 
-print(f\"\033[33mShowing {len(results)} of {total} results\033[0m\")
-" <<< "$response"
+print(f"\033[33mShowing {len(results)} of {total} results\033[0m")
+PY

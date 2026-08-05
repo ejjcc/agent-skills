@@ -538,7 +538,7 @@ def download_media(
             filename = f"{item.index:02d}-{base}-{prefix}-{name_counters[name_key]:02d}{ext}"
             target = images_dir / filename
             target.write_bytes(body)
-            item.target_rel = f"{title}.assets/images/{filename}"
+            item.target_rel = f"assets/images/{filename}"
             item.status = "downloaded"
             log(f"[{position}/{total}] downloaded {filename}", quiet)
         except Exception as exc:  # noqa: BLE001
@@ -590,12 +590,16 @@ def main() -> int:
     source_token, docx_token, wiki_title = resolve_doc(args.doc_input, token)
     title = sanitize_filename(args.doc_name or wiki_title or fetch_doc_title(docx_token, token))
 
-    output_dir = Path(args.output_dir) if args.output_dir else Path("feishu-exports") / source_token
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # output_dir is the *parent* directory; the doc always lives in a self-contained <output_dir>/<title>/.
+    output_dir = Path(args.output_dir) if args.output_dir else Path("feishu-exports")
+    doc_dir = output_dir / title
+    doc_dir.mkdir(parents=True, exist_ok=True)
 
-    raw_md_path = output_dir / f"{title}.raw.md"
-    final_md_path = output_dir / f"{title}.md"
-    assets_dir = output_dir / f"{title}.assets"
+    # File basename uses the immutable Feishu token (not the mutable title),
+    # so renames upstream don't break local references.
+    raw_md_path = doc_dir / f"{source_token}.raw.md"
+    final_md_path = doc_dir / f"{source_token}.md"
+    assets_dir = doc_dir / "assets"
     images_dir = assets_dir / "images"
     image_map_path = assets_dir / "image-map.tsv"
     images_dir.mkdir(parents=True, exist_ok=True)
@@ -628,6 +632,7 @@ def main() -> int:
                 "source_token": source_token,
                 "docx_token": docx_token,
                 "output_dir": str(output_dir),
+                "doc_dir": str(doc_dir),
                 "raw_md": str(raw_md_path),
                 "final_md": str(final_md_path),
                 "assets_dir": str(assets_dir),

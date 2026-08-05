@@ -1,8 +1,15 @@
 ---
 name: excalidraw-diagram
-description: 研发架构图制作规范。使用 Excalidraw 手绘风格程序化生成架构图和技术图表。
+description: >-
+  创建或修改可编辑的 .excalidraw 技术图，以及用户明确要求的 Excalidraw
+  手绘/草图风格架构图。适用于生成 Excalidraw JSON、增量编辑现有
+  .excalidraw、并渲染 SVG 预览。不要因泛化的“架构图/流程图/可视化”自动触发：
+  默认独立 SVG+PNG 技术图使用 fireworks-tech-graph；明确 Mermaid 或写入
+  Markdown/wiki/docs 使用 mermaid-diagrams。
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 argument-hint: <需求描述>
+metadata:
+  version: 0.2.1
 ---
 
 # 研发制图规范
@@ -10,6 +17,16 @@ argument-hint: <需求描述>
 使用 Excalidraw 手绘风格，通过 Node.js 脚本程序化生成架构图、系统图等技术图表。
 
 渲染方式：kroki.io 在线渲染，或 Playwright 本地渲染（离线 / 大文件）。
+
+## 路由边界
+
+- 仅在用户明确要求 `.excalidraw`、可编辑 Excalidraw 场景，或明确指定
+  手绘/草图风格时使用本 Skill。
+- 未指定格式、但要求可直接打开的独立技术图时，使用
+  `fireworks-tech-graph` 交付 SVG+PNG。
+- 明确要求 Mermaid、`.mmd`、Mermaid 代码块，或写入 Markdown/wiki/docs
+  时，使用 `mermaid-diagrams`。
+- 仅出现“架构图”“流程图”“画图”“可视化”等泛化词，不足以选择本 Skill。
 
 ## 1. 布局原则
 
@@ -238,7 +255,7 @@ rsvg-convert output.svg -z 2 -o output.png
 
 ### 5.2 验证
 
-渲染成 SVG/PNG 后，直接用 Read 工具查看图片文件（Read 支持读取图片）。无需 agent-browser。
+渲染成 SVG/PNG 后，直接用 Read 工具查看图片文件（Read 支持读取图片），无需浏览器自动化。
 
 ### 5.3 验证检查清单
 

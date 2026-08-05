@@ -1,7 +1,9 @@
 ---
 name: writing-pipeline
+metadata:
+  version: 0.1.0
 description: 写作评分与内容生产流水线。支持文章写作、Fact Check、10维评分、全流程串联、标准进化。当用户请求"写文章"、"评分"、"打分"、"fact check"、"内容流水线"时使用。
-argument-hint: <markdown_file> <stage: draft|fact-check|score|full|evolve>
+argument-hint: "<markdown_file> <stage: draft|fact-check|score|full|evolve>"
 user-invocable: true
 allowed-tools: Bash, Read, Write, Edit, WebFetch, WebSearch, Grep, Glob
 ---
