@@ -9,6 +9,7 @@ Vendor-shipped skills are intentionally not mirrored here — see [Related colle
 - [Feishu / Lark](#feishu--lark) — 在官方 lark-cli 之上的自研工作流
 - [Writing & Content](#writing--content) — 写作、内容生产
 - [Diagrams & Frontend](#diagrams--frontend) — 图表、HTML 产出
+- [Investing](#investing) — 投资组合架构与决策框架
 - [Skill & Knowledge Management](#skill--knowledge-management) — Skill 的创建、进化、知识沉淀
 - [Browser & Web](#browser--web) — 浏览器自动化、网页内容
 - [Productivity](#productivity) — 效率工具
@@ -48,6 +49,12 @@ Vendor-shipped skills are intentionally not mirrored here — see [Related colle
 | [image-to-svg](./image-to-svg/) | 将架构图、流程图等图片转换为 SVG 矢量格式 |
 | [engineering-artifact-design](./engineering-artifact-design/) | 温暖编辑风格的自包含 HTML artifact 设计规范 |
 | [frontend-harness-slides](./frontend-harness-slides/) | 高标准 HTML slide deck 工作流：可局部编辑不互相破坏 |
+
+## Investing
+
+| Skill | Description |
+|-------|-------------|
+| [portfolio-tree-builder](./portfolio-tree-builder/) | 从目标逐层映射到风险因子、组合角色和具体持仓，识别隐性集中、角色漂移与重复暴露 |
 
 ## Skill & Knowledge Management
 
