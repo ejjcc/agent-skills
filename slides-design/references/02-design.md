@@ -1,5 +1,19 @@
 # 02 Design
 
+## Table of Contents
+
+- [Discover By Eye](#discover-by-eye)
+- [Preview Check](#preview-check)
+- [Selected Theme Notes & Design DNA](#selected-theme-notes--design-dna)
+- [Style System, Not Template](#style-system-not-template)
+- [Theme Tokens](#theme-tokens)
+- [Navigation Design](#navigation-design)
+- [Style Selection & Catalog Guidance](#style-selection--catalog-guidance)
+- [Fonts](#fonts)
+- [Assets](#assets)
+- [Components](#components)
+- [Copy Quality](#copy-quality)
+
 Use this after the plan is clear and before committing the deck's visual system.
 The goal is to choose a style, preview it honestly, select fonts/assets, and
 keep slide copy audience-facing.
@@ -7,15 +21,17 @@ keep slide copy audience-facing.
 ## Discover By Eye
 
 Most users cannot name the exact style they want; they recognize it when they
-see it. Before implementation, explicitly ask whether to make a minimal
-interactive style preview. When visual direction is unclear, recommend three
-real interactive slide previews in meaningfully different directions. When the
-user already gives a clear style, confirm the main style, offer at least five
-style recommendations or refinements with brief reasons, then ask whether to
-make a small same-style preview or proceed directly.
+see it. Follow the user's explicit choice to make or skip a style preview.
+Otherwise, recommend one when unresolved visual choices would benefit from
+comparison; proceed without one when the style is clear or the edit preserves
+the visual system. When visual direction is unclear and the user has not
+declined previews, recommend three real interactive slide previews in
+meaningfully different directions. When the user already gives a clear style,
+use it; nearby refinements with brief reasons are optional inspiration, not a
+required extra question.
 
-During this alignment, send the Live Demo link:
-`https://frontend-harness-slides-demo.vercel.app/`. Describe it as a dynamic
+During open style choice, send the Live Demo link:
+`https://frontend-harness-slides-workbench.vercel.app/`. Describe it as a dynamic
 Workbench Demo with multiple preset styles, transitions, animations, and motion
 examples. The Live Demo helps users judge the general style and motion language;
 the agent's own preview should still use the user's actual content and planned
@@ -152,16 +168,19 @@ the progressive loading guide. Load only the individual style files needed for
 the shortlisted candidates.
 
 Use the following guiding principles to select and align the visual system:
-- **Style proposal**: Include a style proposal in the Pre-Build Alignment. If the
-  user does not have a pre-existing brand or design system, give at least five
-  curated style recommendations from the compact catalog with brief reasons for
-  how they fit the audience, content, and delivery target.
-- **Clear user style**: If the user already chose a style, confirm that main
-  direction, then give at least five same-style refinements or nearby catalog
-  recommendations with reasons as inspiration rather than pressure to switch.
-- **Preview prompt**: Ask whether to create a minimal interactive preview before
-  full implementation. Recommend doing so by default, using the Density-Fit,
-  Safe, and Wildcard mix unless the user has already given a narrower direction.
+- **Style proposal**: Include a style proposal when the visual direction is still
+  open. If the user does not have a pre-existing brand or design system, give at
+  least five curated style recommendations from the compact catalog with brief
+  reasons for how they fit the audience, content, and delivery target.
+- **Clear user style**: If the user already chose a style, use that main
+  direction. Give at least five same-style refinements or nearby catalog
+  recommendations with reasons as inspiration, not as a required extra
+  question.
+- **Preview prompt**: Follow the user's explicit choice to make or skip a
+  preview. Otherwise recommend one when unresolved visual choices would
+  benefit from comparison, using the Density-Fit, Safe, and Wildcard mix;
+  proceed without one when the style is clear or the edit preserves the visual
+  system.
 
 ## Fonts
 

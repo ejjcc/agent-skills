@@ -1,5 +1,18 @@
 # Neo-Brutalist Bulletin
 
+## Table of Contents
+
+- [Aesthetic Thesis](#aesthetic-thesis)
+- [Emotional Register & Fit](#emotional-register--fit)
+- [Color Temperament](#color-temperament)
+- [Typographic Voice](#typographic-voice)
+- [Spatial Temperament](#spatial-temperament)
+- [Material & Atmosphere](#material--atmosphere)
+- [Signature Gestures](#signature-gestures)
+- [Motion & Interaction Register](#motion--interaction-register)
+- [Identity Invariants vs Freedoms](#identity-invariants-vs-freedoms)
+- [What Breaks the Spell](#what-breaks-the-spell)
+
 ## Aesthetic Thesis
 The screen behaves like a protest poster freshly taped to a concrete wall:
 thick black rules, blunt shadows, one electric accent shouting through a field

@@ -48,7 +48,7 @@ Vendor-shipped skills are intentionally not mirrored here — see [Related colle
 | [png-diagram](./png-diagram/) | 通过 HTML/SVG + Playwright 截图生成专业 PNG 图表 |
 | [image-to-svg](./image-to-svg/) | 将架构图、流程图等图片转换为 SVG 矢量格式 |
 | [engineering-artifact-design](./engineering-artifact-design/) | 温暖编辑风格的自包含 HTML artifact 设计规范 |
-| [frontend-harness-slides](./frontend-harness-slides/) | 高标准 HTML slide deck 工作流：可局部编辑不互相破坏 |
+| [slides-design](./slides-design/) | 高标准 HTML slide deck 工作流：可局部编辑不互相破坏（fork 自 [patrick-fu/frontend-harness-slides](https://github.com/patrick-fu/frontend-harness-slides)，MIT） |
 
 ## Investing
 

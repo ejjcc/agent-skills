@@ -1,5 +1,18 @@
 # Soft Pastel Friendly
 
+## Table of Contents
+
+- [Aesthetic Thesis](#aesthetic-thesis)
+- [Emotional Register & Fit](#emotional-register--fit)
+- [Color Temperament](#color-temperament)
+- [Typographic Voice](#typographic-voice)
+- [Spatial Temperament](#spatial-temperament)
+- [Material & Atmosphere](#material--atmosphere)
+- [Signature Gestures](#signature-gestures)
+- [Motion & Interaction Register](#motion--interaction-register)
+- [Identity Invariants vs Freedoms](#identity-invariants-vs-freedoms)
+- [What Breaks the Spell](#what-breaks-the-spell)
+
 ## Aesthetic Thesis
 The screen behaves like a freshly opened pack of pastel markers on warm
 sketch paper — every shape is rounded, every color is soft, and the whole

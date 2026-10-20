@@ -1,5 +1,22 @@
 # 04 Verify And Ship
 
+## Table of Contents
+
+- [Verification Tiers](#verification-tiers)
+- [Audit Profiles](#audit-profiles)
+- [Interaction Checks](#interaction-checks)
+- [Mobile Visibility](#mobile-visibility)
+- [Viewport Stress Audit](#viewport-stress-audit)
+- [Visual Smoke](#visual-smoke)
+- [Browser Coverage](#browser-coverage)
+- [Visual Drift Triage](#visual-drift-triage)
+- [Delivery Target](#delivery-target)
+- [Live Deployment](#live-deployment)
+- [PDF Or Static Handoff](#pdf-or-static-handoff)
+- [Mobile Viewing Note](#mobile-viewing-note)
+- [Troubleshooting](#troubleshooting)
+- [Final Report](#final-report)
+
 Use this before delivery and whenever layout, animation, fonts, assets,
 navigation, harness code, or deployment changes. The goal is to build confidence
 that the deck works, then deliver the confirmed output instead of stopping at a
@@ -183,7 +200,8 @@ Common causes:
 
 ## Delivery Target
 
-Before building, confirm whether the final handoff is:
+Use the user's stated delivery target. If the final handoff is unresolved,
+confirm which output is needed before the choice affects implementation:
 
 - deployed online URL
 - PDF/static export

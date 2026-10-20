@@ -1,5 +1,18 @@
 # Woodblock Floating-World
 
+## Table of Contents
+
+- [Aesthetic Thesis](#aesthetic-thesis)
+- [Emotional Register & Fit](#emotional-register--fit)
+- [Color Temperament](#color-temperament)
+- [Typographic Voice](#typographic-voice)
+- [Spatial Temperament](#spatial-temperament)
+- [Material & Atmosphere](#material--atmosphere)
+- [Signature Gestures](#signature-gestures)
+- [Motion & Interaction Register](#motion--interaction-register)
+- [Identity Invariants vs Freedoms](#identity-invariants-vs-freedoms)
+- [What Breaks the Spell](#what-breaks-the-spell)
+
 ## Aesthetic Thesis
 The screen behaves like a hand-pressed woodblock print laid flat on warm
 paper: flat planes of unmodulated color bounded by confident key-lines, one
